@@ -25,6 +25,8 @@ public sealed class SettingsViewModel : ObservableObject
         ArgumentNullException.ThrowIfNull(workspace);
         UserName = workspace.User.FullName;
         UserRole = workspace.User.Role;
+        IsPaidPlan = workspace.User.Role == "Plan Pro";
+        cloudSyncRequested = IsPaidPlan;
 
         Sections = new ObservableCollection<SettingsSectionItemViewModel>
         {
@@ -58,7 +60,7 @@ public sealed class SettingsViewModel : ObservableObject
         SelectFontSizeCommand = new RelayCommand<EditorFontSizeItemViewModel>(SelectFontSize);
         SelectCitationStyleCommand = new RelayCommand<string>(style => DefaultCitationStyle = style ?? "APA");
         OpenStorageFolderCommand = new RelayCommand(OpenStorageFolder);
-        ActivateCloudSyncCommand = new RelayCommand(ActivateCloudSync);
+        ActivateCloudSyncCommand = new RelayCommand(ActivateCloudSync, () => IsPaidPlan);
 
         SelectSection(Sections[0]);
         SelectFontSize(FontSizes.First(item => item.Size == 15));
@@ -160,6 +162,7 @@ public sealed class SettingsViewModel : ObservableObject
 
     public string UserName { get; }
     public string UserRole { get; }
+    public bool IsPaidPlan { get; }
     public string StorageLocation => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MindLink");
     public string StorageUsage => "847 MB / Sin límite";
     public bool IsAppearanceSection => SelectedSection?.Id == "appearance";
@@ -246,6 +249,11 @@ public sealed class SettingsViewModel : ObservableObject
 
     private void ActivateCloudSync()
     {
+        if (!IsPaidPlan)
+        {
+            StatusMessage = "La sincronizacion cifrada esta disponible con el plan Pro.";
+            return;
+        }
         CloudSyncRequested = true;
         StatusMessage = "Solicitud registrada. La sincronización es un servicio opcional de MindLink.";
     }

@@ -17,6 +17,7 @@ public sealed class MindLinkDbContext(DbContextOptions<MindLinkDbContext> option
             entity.Property(x => x.Email).HasMaxLength(160).IsRequired();
             entity.HasIndex(x => x.Email).IsUnique();
             entity.Property(x => x.PasswordHash).HasMaxLength(128).IsRequired();
+            entity.Property(x => x.Plan).HasMaxLength(20).IsRequired();
         });
 
         modelBuilder.Entity<ActivityLog>(entity =>

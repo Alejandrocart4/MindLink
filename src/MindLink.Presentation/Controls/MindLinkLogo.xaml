@@ -8,16 +8,12 @@
   <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
     <Border Width="{Binding LogoSize, ElementName=Root}"
             Height="{Binding LogoSize, ElementName=Root}"
-            Background="{StaticResource PrimaryGradient}"
+            Background="#635BFF"
             CornerRadius="10"
             Effect="{StaticResource BrandShadow}">
       <Viewbox Margin="7">
-        <Path Data="{StaticResource LogoBrainGeometry}"
-              Stroke="White"
-              StrokeThickness="1.45"
-              StrokeStartLineCap="Round"
-              StrokeEndLineCap="Round"
-              StrokeLineJoin="Round" />
+        <Path Data="M50,0 L60,32 L92,42 L60,52 L50,84 L40,52 L8,42 L40,32 Z"
+              Fill="White" />
       </Viewbox>
     </Border>
     <TextBlock Text="MindLink"
@@ -27,12 +23,7 @@
                FontSize="{Binding TextFontSize, ElementName=Root}"
                FontWeight="Bold"
                Visibility="{Binding ShowText, ElementName=Root, Converter={StaticResource BooleanToVisibility}}">
-      <TextBlock.Foreground>
-        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-          <GradientStop Color="#003280" Offset="0" />
-          <GradientStop Color="#009BA9" Offset="1" />
-        </LinearGradientBrush>
-      </TextBlock.Foreground>
+      <TextBlock.Foreground><Binding Path="TextForeground" ElementName="Root" /></TextBlock.Foreground>
     </TextBlock>
   </StackPanel>
 </UserControl>

@@ -49,10 +49,11 @@ public partial class App : System.Windows.Application
         collection.AddScoped<DatabaseInitializer>();
         collection.AddScoped<IAuthenticationService, AuthenticationService>();
         collection.AddScoped<IDashboardService, DashboardService>();
-        collection.AddSingleton<IWorkspaceDataService, DemoWorkspaceDataService>();
+        collection.AddSingleton<IWorkspaceDataService, EmptyWorkspaceDataService>();
         collection.AddSingleton<IFileDialogService, FileDialogService>();
         collection.AddSingleton<NavigationService>();
         collection.AddSingleton<WorkspaceShellViewModel>();
+        collection.AddTransient<LoginViewModel>();
         collection.AddTransient<WelcomeViewModel>();
         collection.AddSingleton<MainViewModel>();
 

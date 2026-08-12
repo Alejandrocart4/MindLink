@@ -10,36 +10,42 @@ public sealed class DatabaseInitializer(MindLinkDbContext database)
     public async Task InitializeAsync()
     {
         await database.Database.MigrateAsync();
-        var demoUser = await database.Users
-            .Where(user => user.Email == "jonny@mindlink.local")
-            .FirstOrDefaultAsync();
 
-        demoUser ??= await database.Users
-            .Where(user => user.Email == "valeria@mindlink.local")
-            .FirstOrDefaultAsync();
-        if (demoUser is not null)
+        // Remove the only data created by prior sample versions.
+        var sampleEmails = new[] { "jonny@mindlink.local", "valeria@mindlink.local" };
+        var sampleUsers = await database.Users.Where(user => sampleEmails.Contains(user.Email)).ToListAsync();
+        database.Users.RemoveRange(sampleUsers);
+        database.ActivityLogs.RemoveRange(await database.ActivityLogs.ToListAsync());
+
+        var now = DateTime.Now;
+        await EnsureAccountAsync("Cuenta Free", "free@mindlink.local", "MindLinkFree2026!", "Free", now);
+        await EnsureAccountAsync("Cuenta Pro", "pro@mindlink.local", "MindLinkPro2026!", "Pro", now);
+        await database.SaveChangesAsync();
+    }
+
+    private async Task EnsureAccountAsync(string fullName, string email, string password, string plan, DateTime now)
+    {
+        var user = await database.Users.SingleOrDefaultAsync(item => item.Email == email);
+        if (user is null)
         {
-            demoUser.FullName = "Jonny";
-            demoUser.Email = "jonny@mindlink.local";
-            demoUser.UpdatedAt = DateTime.Now;
-            await database.SaveChangesAsync();
+            database.Users.Add(new LocalUser
+            {
+                FullName = fullName,
+                Email = email,
+                PasswordHash = HashPassword(password),
+                Plan = plan,
+                CreatedAt = now,
+                UpdatedAt = now
+            });
             return;
         }
 
-        if (await database.Users.AnyAsync()) return;
-
-        var now = DateTime.Now;
-        database.Users.Add(new LocalUser
-        {
-            FullName = "Jonny", Email = "jonny@mindlink.local",
-            PasswordHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes("MindLink2026!"))),
-            CreatedAt = now, UpdatedAt = now
-        });
-        database.ActivityLogs.AddRange(
-            new ActivityLog { Title = "Mapa actualizado", Detail = "Conectaste 4 ideas sobre carga cognitiva.", Category = "Conexión", OccurredAt = now.AddMinutes(-18) },
-            new ActivityLog { Title = "Nueva fuente vinculada", Detail = "Añadiste el estudio de Sweller a Marco teórico.", Category = "Fuente", OccurredAt = now.AddHours(-2) },
-            new ActivityLog { Title = "Borrador guardado", Detail = "Introducción · versión 6 creada correctamente.", Category = "Redacción", OccurredAt = now.AddHours(-5) },
-            new ActivityLog { Title = "Objetivo revisado", Detail = "Ajustaste el alcance del proyecto de investigación.", Category = "Proyecto", OccurredAt = now.AddDays(-1) });
-        await database.SaveChangesAsync();
+        user.FullName = fullName;
+        user.PasswordHash = HashPassword(password);
+        user.Plan = plan;
+        user.UpdatedAt = now;
     }
+
+    private static string HashPassword(string password) =>
+        Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(password)));
 }

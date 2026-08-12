@@ -12,6 +12,7 @@ public sealed class WorkspaceShellViewModel : ObservableObject
     private WorkspaceSnapshot? workspace;
     private bool isSidebarExpanded = true;
     private bool isNotificationsOpen;
+    private bool isAccountMenuOpen;
     private string searchText = string.Empty;
     private string statusMessage = "Guardado";
 
@@ -39,6 +40,9 @@ public sealed class WorkspaceShellViewModel : ObservableObject
         SearchCommand = new RelayCommand(ExecuteSearch, () => !string.IsNullOrWhiteSpace(SearchText));
         ToggleNotificationsCommand = new RelayCommand(() => IsNotificationsOpen = !IsNotificationsOpen);
         CloseNotificationsCommand = new RelayCommand(() => IsNotificationsOpen = false);
+        ToggleAccountMenuCommand = new RelayCommand(() => IsAccountMenuOpen = !IsAccountMenuOpen);
+        CloseAccountMenuCommand = new RelayCommand(() => IsAccountMenuOpen = false);
+        SignOutCommand = new RelayCommand(SignOut);
     }
 
     public ObservableCollection<NavigationItemViewModel> NavigationItems { get; }
@@ -47,6 +51,9 @@ public sealed class WorkspaceShellViewModel : ObservableObject
     public RelayCommand SearchCommand { get; }
     public RelayCommand ToggleNotificationsCommand { get; }
     public RelayCommand CloseNotificationsCommand { get; }
+    public RelayCommand ToggleAccountMenuCommand { get; }
+    public RelayCommand CloseAccountMenuCommand { get; }
+    public RelayCommand SignOutCommand { get; }
 
     public ObservableObject? CurrentPage
     {
@@ -106,21 +113,44 @@ public sealed class WorkspaceShellViewModel : ObservableObject
         set => SetProperty(ref isNotificationsOpen, value);
     }
 
+    public bool IsAccountMenuOpen
+    {
+        get => isAccountMenuOpen;
+        set => SetProperty(ref isAccountMenuOpen, value);
+    }
+
     public void Initialize(WorkspaceSnapshot snapshot)
     {
         Workspace = snapshot;
         pages.Clear();
+        NavigationItems.Clear();
+        AddNavigationItem("Inicio", "\uE80F", WorkspaceRoute.Dashboard);
+        AddNavigationItem("Proyectos", "\uE8B7", WorkspaceRoute.Projects);
+        AddNavigationItem("Notas", "\uE70B", WorkspaceRoute.Notes);
+        AddNavigationItem("Referencias", "\uE82D", WorkspaceRoute.References);
         pages[WorkspaceRoute.Dashboard] = new DashboardViewModel(snapshot, navigation);
         pages[WorkspaceRoute.Projects] = new ProjectsViewModel(snapshot);
         pages[WorkspaceRoute.Notes] = new NotesViewModel(snapshot);
-        pages[WorkspaceRoute.KnowledgeNetwork] = new KnowledgeNetworkViewModel(snapshot);
         pages[WorkspaceRoute.References] = new ReferencesViewModel(snapshot);
-        pages[WorkspaceRoute.Citations] = new CitationsViewModel(snapshot);
-        pages[WorkspaceRoute.Documents] = new DocumentsViewModel(snapshot);
-        pages[WorkspaceRoute.History] = new HistoryViewModel(snapshot);
-        pages[WorkspaceRoute.Export] = new ExportViewModel(snapshot);
+        if (snapshot.User.Role == "Plan Pro")
+        {
+            AddNavigationItem("Red de conocimiento", "\uE968", WorkspaceRoute.KnowledgeNetwork);
+            AddNavigationItem("Citas", "\uE8B2", WorkspaceRoute.Citations);
+            AddNavigationItem("Documentos", "\uE8A5", WorkspaceRoute.Documents);
+            AddNavigationItem("Historial", "\uE81C", WorkspaceRoute.History);
+            AddNavigationItem("Exportaciones", "\uE72D", WorkspaceRoute.Export);
+            pages[WorkspaceRoute.KnowledgeNetwork] = new KnowledgeNetworkViewModel(snapshot);
+            pages[WorkspaceRoute.Citations] = new CitationsViewModel(snapshot);
+            pages[WorkspaceRoute.Documents] = new DocumentsViewModel(snapshot);
+            pages[WorkspaceRoute.History] = new HistoryViewModel(snapshot);
+            pages[WorkspaceRoute.Export] = new ExportViewModel(snapshot);
+        }
+        AddNavigationItem("Configuracion", "\uE713", WorkspaceRoute.Settings);
         pages[WorkspaceRoute.Settings] = new SettingsViewModel(snapshot);
     }
+
+    private void AddNavigationItem(string label, string iconGlyph, WorkspaceRoute route) =>
+        NavigationItems.Add(new NavigationItemViewModel(label, iconGlyph, route, navigation.Navigate));
 
     private void NavigateTo(WorkspaceRoute route)
     {
@@ -128,6 +158,7 @@ public sealed class WorkspaceShellViewModel : ObservableObject
         CurrentPage = page;
         foreach (var item in NavigationItems) item.IsSelected = item.Route == route;
         IsNotificationsOpen = false;
+        IsAccountMenuOpen = false;
     }
 
     private void ExecuteSearch()
@@ -137,5 +168,16 @@ public sealed class WorkspaceShellViewModel : ObservableObject
 
         StatusMessage = "Búsqueda aplicada";
         navigation.Navigate(WorkspaceRoute.Notes);
+    }
+
+    private void SignOut()
+    {
+        AppSession.UserId = 0;
+        AppSession.UserName = string.Empty;
+        AppSession.Plan = string.Empty;
+        IsAccountMenuOpen = false;
+        Workspace = null;
+        CurrentPage = null;
+        navigation.ShowLogin();
     }
 }

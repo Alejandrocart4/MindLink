@@ -4,5 +4,5 @@ namespace MindLink.Application.Interfaces;
 
 public interface IWorkspaceDataService
 {
-    Task<WorkspaceSnapshot> GetWorkspaceAsync(CancellationToken cancellationToken = default);
+    Task<WorkspaceSnapshot> GetWorkspaceAsync(int userId, CancellationToken cancellationToken = default);
 }

@@ -14,9 +14,12 @@ public sealed class NavigationService(
     public void ShowWelcome() =>
         RootNavigated?.Invoke(services.GetRequiredService<WelcomeViewModel>());
 
+    public void ShowLogin() =>
+        RootNavigated?.Invoke(services.GetRequiredService<LoginViewModel>());
+
     public async Task OpenWorkspaceAsync(WorkspaceRoute initialRoute = WorkspaceRoute.Dashboard)
     {
-        var snapshot = await workspaceDataService.GetWorkspaceAsync();
+        var snapshot = await workspaceDataService.GetWorkspaceAsync(AppSession.UserId);
         var shell = services.GetRequiredService<WorkspaceShellViewModel>();
         shell.Initialize(snapshot);
         RootNavigated?.Invoke(shell);
@@ -26,7 +29,7 @@ public sealed class NavigationService(
     public void Navigate(WorkspaceRoute route) => WorkspaceRouteRequested?.Invoke(route);
 
     // Compatibilidad temporal con los ViewModels de la primera iteración.
-    public void NavigateToLogin() => ShowWelcome();
+    public void NavigateToLogin() => ShowLogin();
     public void NavigateToDashboard() => _ = OpenWorkspaceAsync();
     public void NavigateToModule(string module) => Navigate(module switch
     {

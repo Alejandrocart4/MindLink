@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace MindLink.Presentation.Controls;
 
@@ -13,6 +14,9 @@ public partial class MindLinkLogo : UserControl
 
     public static readonly DependencyProperty ShowTextProperty = DependencyProperty.Register(
         nameof(ShowText), typeof(bool), typeof(MindLinkLogo), new PropertyMetadata(true));
+
+    public static readonly DependencyProperty TextForegroundProperty = DependencyProperty.Register(
+        nameof(TextForeground), typeof(Brush), typeof(MindLinkLogo), new PropertyMetadata(new SolidColorBrush(Color.FromRgb(0, 50, 128))));
 
     public MindLinkLogo() => InitializeComponent();
 
@@ -32,5 +36,11 @@ public partial class MindLinkLogo : UserControl
     {
         get => (bool)GetValue(ShowTextProperty);
         set => SetValue(ShowTextProperty, value);
+    }
+
+    public Brush TextForeground
+    {
+        get => (Brush)GetValue(TextForegroundProperty);
+        set => SetValue(TextForegroundProperty, value);
     }
 }
