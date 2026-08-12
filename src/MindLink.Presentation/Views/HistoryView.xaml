@@ -1,0 +1,234 @@
+<UserControl x:Class="MindLink.Presentation.Views.HistoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             MinWidth="780" MinHeight="520">
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+    <Style x:Key="VersionTimelineButton" TargetType="Button">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Padding" Value="10,8" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Root" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="Stretch" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Root" Property="Background" Value="{StaticResource SoftBlue}" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Style.Triggers>
+        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+          <Setter Property="Background" Value="{StaticResource SoftTeal}" />
+          <Setter Property="BorderBrush" Value="#A5DCE1" />
+        </DataTrigger>
+      </Style.Triggers>
+    </Style>
+  </UserControl.Resources>
+
+  <Grid Background="{StaticResource AppBackground}">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="260" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <!-- Línea de tiempo -->
+    <Border Grid.Column="0" Background="White" BorderBrush="{StaticResource Border}" BorderThickness="0,0,1,0">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="72" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Border Padding="16,15,16,11" BorderBrush="#EEF4F7" BorderThickness="0,0,0,1">
+          <StackPanel>
+            <TextBlock Text="Historial de versiones" FontSize="14" FontWeight="Bold" Foreground="{StaticResource BrandNavy}" />
+            <TextBlock Text="{Binding VersionSummary}" Margin="0,4,0,0" FontSize="12" Foreground="{StaticResource TextMuted}" />
+          </StackPanel>
+        </Border>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+          <ItemsControl ItemsSource="{Binding Versions}" Margin="12,16,12,20">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Grid Margin="0,0,0,13">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="31" />
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <Border Width="2" Margin="10,20,0,-20" HorizontalAlignment="Left" Background="#DDEBF0" />
+                  <Ellipse Width="22" Height="22" HorizontalAlignment="Left" VerticalAlignment="Top"
+                           Fill="#D9E7EC" Stroke="#D9E7EC" StrokeThickness="2">
+                    <Ellipse.Style>
+                      <Style TargetType="Ellipse">
+                        <Setter Property="Fill" Value="#D9E7EC" />
+                        <Setter Property="Stroke" Value="#D9E7EC" />
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                            <Setter Property="Fill" Value="{StaticResource BrandTeal}" />
+                            <Setter Property="Stroke" Value="{StaticResource BrandTealDark}" />
+                          </DataTrigger>
+                          <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                            <Setter Property="Fill" Value="{StaticResource Success}" />
+                            <Setter Property="Stroke" Value="{StaticResource Success}" />
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </Ellipse.Style>
+                  </Ellipse>
+                  <Button Grid.Column="1" Style="{StaticResource VersionTimelineButton}"
+                          Command="{Binding DataContext.SelectVersionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                          CommandParameter="{Binding}">
+                    <StackPanel>
+                      <TextBlock Text="{Binding DisplayLabel}" FontSize="13" FontWeight="Bold" Foreground="{StaticResource TextPrimary}">
+                        <TextBlock.Style>
+                          <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource BrandPetroleum}" />
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </TextBlock.Style>
+                      </TextBlock>
+                      <TextBlock Text="{Binding TimeLabel}" Margin="0,3,0,0" FontSize="11.5" Foreground="{StaticResource TextMuted}" />
+                      <TextBlock Text="{Binding SectionLabel}" Margin="0,3,0,0" FontSize="11.5" Foreground="{StaticResource TextSubtle}" />
+                      <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <TextBlock Text="{Binding AddedLabel}" FontFamily="Consolas" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource Success}" />
+                        <TextBlock Text="{Binding RemovedLabel}" Margin="9,0,0,0" FontFamily="Consolas" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource Danger}" />
+                      </StackPanel>
+                    </StackPanel>
+                  </Button>
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
+    </Border>
+
+    <!-- Comparación -->
+    <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <StackPanel Margin="32,28,32,44">
+        <Grid Margin="0,0,0,20">
+          <StackPanel>
+            <TextBlock Text="Comparación de versiones" FontSize="20" FontWeight="Bold" Foreground="{StaticResource BrandNavy}" />
+            <TextBlock Text="{Binding ComparisonLabel}" Margin="0,5,0,0" FontSize="13" Foreground="{StaticResource TextMuted}" />
+          </StackPanel>
+          <Button HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource SecondaryButton}"
+                  Padding="14,8" Foreground="#C0392B" BorderBrush="#F1B2AB"
+                  Command="{Binding RequestRestoreCommand}" Content="↶  Restaurar esta versión" />
+        </Grid>
+
+        <Border Visibility="{Binding IsRestoreConfirmationVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Margin="0,0,0,14" Padding="14,11" Background="{StaticResource SoftRed}"
+                BorderBrush="#F0B4AD" BorderThickness="1" CornerRadius="10">
+          <Grid>
+            <StackPanel>
+              <TextBlock Text="¿Restaurar esta versión?" FontSize="13" FontWeight="SemiBold" Foreground="#A93226" />
+              <TextBlock Text="La versión seleccionada pasará a ser la actual; las demás permanecerán disponibles en el historial."
+                         Margin="0,3,0,0" FontSize="11.5" Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal">
+              <Button Style="{StaticResource TextButton}" Margin="0,0,5,0" Command="{Binding CancelRestoreCommand}" Content="Cancelar" />
+              <Button Style="{StaticResource SecondaryButton}" Padding="12,6" Foreground="#C0392B" BorderBrush="#F1B2AB"
+                      Command="{Binding ConfirmRestoreCommand}" Content="Sí, restaurar" />
+            </StackPanel>
+          </Grid>
+        </Border>
+
+        <Border Visibility="{Binding IsRestorationMessageVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Margin="0,0,0,14" Padding="13,9" Background="{StaticResource SoftGreen}"
+                BorderBrush="#BFE6CE" BorderThickness="1" CornerRadius="9">
+          <Grid>
+            <TextBlock Text="{Binding RestorationMessage}" FontSize="12.5" FontWeight="SemiBold" Foreground="#27864F" />
+            <Button HorizontalAlignment="Right" Style="{StaticResource TextButton}" Padding="5,1"
+                    Foreground="#27864F" Command="{Binding DismissMessageCommand}" Content="×" />
+          </Grid>
+        </Border>
+
+        <Grid Margin="0,0,0,18">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="12" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <Border Grid.Column="0" Padding="16,13" Background="White" BorderBrush="#E8F0F3" BorderThickness="1" CornerRadius="10">
+            <StackPanel>
+              <TextBlock Text="{Binding PreviousVersion.Label, StringFormat={}{0} (anterior)}" FontFamily="Consolas" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}" />
+              <TextBlock Text="{Binding PreviousVersion.Summary}" Margin="0,7,0,0" FontSize="12.5" Foreground="{StaticResource TextPrimary}" TextWrapping="Wrap" />
+              <TextBlock Text="{Binding PreviousVersion.TimeLabel}" Margin="0,5,0,0" FontSize="11.5" Foreground="{StaticResource TextSubtle}" />
+            </StackPanel>
+          </Border>
+          <Border Grid.Column="2" Padding="16,13" Background="White" BorderBrush="#8FD4DA" BorderThickness="1" CornerRadius="10">
+            <StackPanel>
+              <TextBlock Text="{Binding SelectedVersion.DisplayLabel, StringFormat={}{0} (actual)}" FontFamily="Consolas" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource BrandTeal}" />
+              <TextBlock Text="{Binding SelectedVersion.Summary}" Margin="0,7,0,0" FontSize="12.5" Foreground="{StaticResource TextPrimary}" TextWrapping="Wrap" />
+              <TextBlock Text="{Binding SelectedVersion.TimeLabel}" Margin="0,5,0,0" FontSize="11.5" Foreground="{StaticResource TextSubtle}" />
+            </StackPanel>
+          </Border>
+        </Grid>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+          <StackPanel Orientation="Horizontal" Margin="0,0,14,0">
+            <Border Width="12" Height="12" CornerRadius="3" Background="#DDF3E6" BorderBrush="#82D2A1" BorderThickness="1" />
+            <TextBlock Text="Texto agregado" Margin="6,-2,0,0" FontSize="12.5" Foreground="{StaticResource TextMuted}" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <Border Width="12" Height="12" CornerRadius="3" Background="#F9DEDB" BorderBrush="#EEA49C" BorderThickness="1" />
+            <TextBlock Text="Texto eliminado" Margin="6,-2,0,0" FontSize="12.5" Foreground="{StaticResource TextMuted}" />
+          </StackPanel>
+        </StackPanel>
+
+        <Border Background="White" BorderBrush="{StaticResource Border}" BorderThickness="1" CornerRadius="14" ClipToBounds="True" Margin="0,0,0,16">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0" Padding="20,15" Background="#FFF9F8" BorderBrush="#EEF4F7" BorderThickness="0,0,0,1">
+              <StackPanel>
+                <TextBlock Text="− VERSIÓN ANTERIOR" FontFamily="Consolas" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource Danger}" />
+                <Border Margin="0,10,0,0" Padding="7,3" Background="#F9DEDB" CornerRadius="3">
+                  <TextBlock Text="{Binding PreviousText}" FontSize="14.5" Foreground="#A53A30" TextWrapping="Wrap" TextDecorations="Strikethrough" LineHeight="24" />
+                </Border>
+              </StackPanel>
+            </Border>
+            <Border Grid.Row="1" Padding="20,15" Background="#F8FDF9">
+              <StackPanel>
+                <TextBlock Text="＋ VERSIÓN SELECCIONADA" FontFamily="Consolas" FontSize="10.5" FontWeight="SemiBold" Foreground="#27864F" />
+                <Border Margin="0,10,0,0" Padding="7,3" Background="#DDF3E6" CornerRadius="3">
+                  <TextBlock Text="{Binding CurrentText}" FontSize="14.5" Foreground="#1A6B37" FontWeight="Medium" TextWrapping="Wrap" LineHeight="24" />
+                </Border>
+              </StackPanel>
+            </Border>
+          </Grid>
+        </Border>
+
+        <StackPanel Orientation="Horizontal">
+          <Border Style="{StaticResource CompactCard}" Padding="16,12" Margin="0,0,12,0">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <TextBlock Text="{Binding AddedLabel}" FontSize="20" FontWeight="Bold" Foreground="{StaticResource Success}" />
+              <TextBlock Text="caracteres agregados" Margin="8,4,0,0" FontSize="12" Foreground="{StaticResource TextMuted}" />
+            </StackPanel>
+          </Border>
+          <Border Style="{StaticResource CompactCard}" Padding="16,12">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <TextBlock Text="{Binding RemovedLabel}" FontSize="20" FontWeight="Bold" Foreground="{StaticResource Danger}" />
+              <TextBlock Text="caracteres eliminados" Margin="8,4,0,0" FontSize="12" Foreground="{StaticResource TextMuted}" />
+            </StackPanel>
+          </Border>
+        </StackPanel>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

@@ -1,0 +1,385 @@
+<UserControl x:Class="MindLink.Presentation.Views.DocumentsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             MinWidth="860" MinHeight="560">
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+    <Style x:Key="DocumentToolButton" TargetType="Button">
+      <Setter Property="Width" Value="32" />
+      <Setter Property="Height" Value="30" />
+      <Setter Property="Margin" Value="1,0" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{StaticResource TextMuted}" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="6">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Root" Property="Background" Value="{StaticResource SoftBlue}" />
+                <Setter Property="Foreground" Value="{StaticResource BrandBlue}" />
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Root" Property="Opacity" Value="0.72" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style x:Key="SectionTreeButton" TargetType="Button">
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{StaticResource TextMuted}" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="2,0,0,0" />
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="Margin" Value="8,1,0,1" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Root"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="6"
+                    Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Root" Property="Background" Value="{StaticResource SoftBlue}" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Style.Triggers>
+        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+          <Setter Property="Background" Value="{StaticResource SoftTeal}" />
+          <Setter Property="BorderBrush" Value="{StaticResource BrandTeal}" />
+          <Setter Property="Foreground" Value="{StaticResource BrandTealDark}" />
+          <Setter Property="FontWeight" Value="SemiBold" />
+        </DataTrigger>
+        <DataTrigger Binding="{Binding IsChapter}" Value="True">
+          <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+          <Setter Property="FontWeight" Value="Bold" />
+          <Setter Property="Margin" Value="0,7,0,2" />
+          <Setter Property="Padding" Value="8,4" />
+          <Setter Property="IsHitTestVisible" Value="False" />
+        </DataTrigger>
+      </Style.Triggers>
+    </Style>
+
+    <Style x:Key="ContextTabButton" TargetType="Button">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{StaticResource TextSubtle}" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0,0,0,2" />
+      <Setter Property="Padding" Value="4,11,4,9" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="Center" />
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style x:Key="EditorParagraph" TargetType="TextBox" BasedOn="{StaticResource InputBox}">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="FontSize" Value="15.5" />
+      <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="AcceptsReturn" Value="True" />
+      <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+      <Setter Property="Margin" Value="0,0,0,18" />
+      <Style.Triggers>
+        <DataTrigger Binding="{Binding IsBold}" Value="True">
+          <Setter Property="FontWeight" Value="SemiBold" />
+        </DataTrigger>
+        <DataTrigger Binding="{Binding IsItalic}" Value="True">
+          <Setter Property="FontStyle" Value="Italic" />
+        </DataTrigger>
+      </Style.Triggers>
+    </Style>
+  </UserControl.Resources>
+
+  <Grid Background="#FAFCFD">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="220" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="280" />
+    </Grid.ColumnDefinitions>
+
+    <!-- Estructura del documento -->
+    <Border Grid.Column="0" Background="White" BorderBrush="{StaticResource Border}" BorderThickness="0,0,1,0">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Border Padding="16,14" BorderBrush="#EEF4F7" BorderThickness="0,0,0,1">
+          <StackPanel>
+            <TextBlock Text="PROYECTO ACTIVO" FontSize="10.5" FontWeight="SemiBold"
+                       Foreground="{StaticResource TextSubtle}" />
+            <TextBlock Text="{Binding ProjectTitle}" Margin="0,4,0,0" FontSize="12.5" FontWeight="SemiBold"
+                       Foreground="{StaticResource TextPrimary}" TextWrapping="Wrap" LineHeight="16" />
+          </StackPanel>
+        </Border>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+          <StackPanel Margin="8,14,8,18">
+            <TextBlock Text="ESTRUCTURA" Margin="8,0,0,8" FontSize="10.5" FontWeight="SemiBold"
+                       Foreground="{StaticResource TextSubtle}" />
+            <ItemsControl ItemsSource="{Binding Sections}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Button Style="{StaticResource SectionTreeButton}"
+                          Content="{Binding DisplayLabel}"
+                          Command="{Binding DataContext.SelectSectionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                          CommandParameter="{Binding}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ScrollViewer>
+      </Grid>
+    </Border>
+
+    <!-- Editor -->
+    <Grid Grid.Column="1">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="47" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+
+      <Border Background="White" BorderBrush="{StaticResource Border}" BorderThickness="0,0,0,1" Padding="20,8">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+          <StackPanel Orientation="Horizontal">
+            <Button Style="{StaticResource DocumentToolButton}" Content="B" FontWeight="Bold" Command="{Binding ToggleBoldCommand}" ToolTip="Alternar negrita" />
+            <Button Style="{StaticResource DocumentToolButton}" Content="I" FontStyle="Italic" Command="{Binding ToggleItalicCommand}" ToolTip="Alternar cursiva" />
+            <Button Style="{StaticResource DocumentToolButton}" Content="H" Command="{Binding IncreaseFontSizeCommand}" ToolTip="Aumentar tamaño de texto" />
+            <Button Style="{StaticResource DocumentToolButton}" Content="❞" Command="{Binding InsertCitationCommand}" ToolTip="Insertar primera cita relacionada" />
+          </StackPanel>
+          <Border Grid.Column="1" Width="1" Height="20" Margin="8,0" Background="{StaticResource Border}" />
+          <Button Grid.Column="2" HorizontalAlignment="Left" Style="{StaticResource SecondaryButton}"
+                  Padding="10,6" FontSize="12" Foreground="{StaticResource BrandTealDark}"
+                  BorderBrush="#69C8D0" Command="{Binding InsertCitationCommand}" Content="❞  Insertar cita" />
+          <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+            <TextBlock Text="{Binding WordCountLabel}" Foreground="{StaticResource TextSubtle}" FontFamily="Consolas" FontSize="11.5" VerticalAlignment="Center" />
+            <Button Style="{StaticResource TextButton}" Margin="10,0,0,0" Padding="5,3" Command="{Binding SaveCommand}">
+              <StackPanel Orientation="Horizontal">
+                <Ellipse Width="6" Height="6" Fill="{StaticResource Success}" Margin="0,0,5,0" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding SaveStatus}" Foreground="{StaticResource Success}" FontSize="11.5" />
+              </StackPanel>
+            </Button>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="44,34,44,50" MaxWidth="700" HorizontalAlignment="Center">
+          <StackPanel>
+            <TextBlock Text="{Binding SectionContext}" FontFamily="Consolas" FontSize="10.5" FontWeight="SemiBold"
+                       Foreground="{StaticResource TextSubtle}" />
+            <TextBlock Text="{Binding SectionTitle}" Margin="0,8,0,24" FontSize="28" FontWeight="Bold"
+                       Foreground="{StaticResource BrandNavy}" TextWrapping="Wrap" />
+
+            <TextBox Style="{StaticResource EditorParagraph}" FontSize="{Binding EditorFontSize}"
+                     Text="{Binding ParagraphOne, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Style="{StaticResource EditorParagraph}" FontSize="{Binding EditorFontSize}"
+                     Text="{Binding ParagraphTwo, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Border Visibility="{Binding ShowResearchCallouts, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Margin="0,2,0,20" Padding="18,13" Background="{StaticResource SoftTeal}"
+                    BorderBrush="{StaticResource BrandTeal}" BorderThickness="3,0,0,0" CornerRadius="0,10,10,0">
+              <StackPanel>
+                <TextBlock Text="“Los sistemas de aprendizaje adaptativo integran dimensiones afectivas, contextuales y motivacionales para generar trayectorias verdaderamente individualizadas.”"
+                           FontSize="14.5" FontStyle="Italic" Foreground="{StaticResource TextPrimary}" TextWrapping="Wrap" LineHeight="24" />
+                <TextBlock Text="— UNESCO, 2023, AI Competency Framework for Students, p. 34"
+                           Margin="0,7,0,0" FontSize="12" Foreground="{StaticResource TextMuted}" />
+              </StackPanel>
+            </Border>
+
+            <TextBox Style="{StaticResource EditorParagraph}" FontSize="{Binding EditorFontSize}"
+                     Text="{Binding ParagraphThree, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Border Visibility="{Binding ShowResearchCallouts, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Margin="0,0,0,20" Padding="14,10" Background="{StaticResource SoftAmber}"
+                    BorderBrush="#F0CD87" BorderThickness="1" CornerRadius="10">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="30" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Width="28" Height="28" CornerRadius="14" Background="{StaticResource Warning}" VerticalAlignment="Top">
+                  <TextBlock Text="MR" Foreground="White" FontSize="9.5" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                  <TextBlock Text="Comentario" FontSize="11.5" FontWeight="SemiBold" Foreground="#C27C0E" />
+                  <TextBlock Text="Agregar referencia adicional sobre bias algorítmico. Revisar artículo de Holmes et al. (2021)."
+                             Margin="0,3,0,0" FontSize="12.5" Foreground="#6B5010" TextWrapping="Wrap" />
+                </StackPanel>
+              </Grid>
+            </Border>
+          </StackPanel>
+        </Grid>
+      </ScrollViewer>
+    </Grid>
+
+    <!-- Contexto relacionado -->
+    <Border Grid.Column="2" Background="White" BorderBrush="{StaticResource Border}" BorderThickness="1,0,0,0">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="47" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <Button Grid.Column="0" Content="Referencias"
+                  Command="{Binding SelectContextTabCommand}" CommandParameter="Referencias">
+            <Button.Style>
+              <Style TargetType="Button" BasedOn="{StaticResource ContextTabButton}">
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding ShowingReferences}" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource BrandTealDark}" />
+                    <Setter Property="BorderBrush" Value="{StaticResource BrandTeal}" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Button.Style>
+          </Button>
+          <Button Grid.Column="1" Content="Notas"
+                  Command="{Binding SelectContextTabCommand}" CommandParameter="Notas">
+            <Button.Style>
+              <Style TargetType="Button" BasedOn="{StaticResource ContextTabButton}">
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding ShowingNotes}" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource BrandTealDark}" />
+                    <Setter Property="BorderBrush" Value="{StaticResource BrandTeal}" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Button.Style>
+          </Button>
+          <Button Grid.Column="2" Content="Historial"
+                  Command="{Binding SelectContextTabCommand}" CommandParameter="Historial">
+            <Button.Style>
+              <Style TargetType="Button" BasedOn="{StaticResource ContextTabButton}">
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding ShowingHistory}" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource BrandTealDark}" />
+                    <Setter Property="BorderBrush" Value="{StaticResource BrandTeal}" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Button.Style>
+          </Button>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+          <StackPanel Margin="16">
+            <StackPanel Visibility="{Binding ShowingReferences, Converter={StaticResource BooleanToVisibilityConverter}}">
+              <TextBlock Text="REFERENCIAS RELACIONADAS" Margin="0,0,0,11" FontSize="10.5" FontWeight="SemiBold"
+                         Foreground="{StaticResource TextSubtle}" />
+              <ItemsControl ItemsSource="{Binding RelatedReferences}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Border Margin="0,0,0,8" Padding="12,10" BorderBrush="#E7F0F3" BorderThickness="1" CornerRadius="10">
+                      <StackPanel>
+                        <Grid>
+                          <TextBlock Text="{Binding AuthorYear}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" />
+                          <Border HorizontalAlignment="Right" Background="{StaticResource SoftTeal}" CornerRadius="4" Padding="5,2">
+                            <TextBlock Text="{Binding RelevanceLabel}" FontSize="9.5" FontWeight="SemiBold" Foreground="{StaticResource BrandTeal}" />
+                          </Border>
+                        </Grid>
+                        <TextBlock Text="{Binding Title}" Margin="0,5,0,0" FontSize="11.5" Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" MaxHeight="34" />
+                        <Button Style="{StaticResource TextButton}" HorizontalAlignment="Left" Margin="-8,3,0,-4" Padding="8,4"
+                                Foreground="{StaticResource BrandTeal}" FontSize="11"
+                                Content="Insertar cita →"
+                                Command="{Binding DataContext.InsertCitationCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}" />
+                      </StackPanel>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Text="ETIQUETAS" Margin="0,14,0,9" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource TextSubtle}" />
+              <ItemsControl ItemsSource="{Binding Tags}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Border Style="{StaticResource TagPill}" Margin="0,0,6,6" Padding="8,3">
+                      <TextBlock Text="{Binding}" FontSize="10.5" Foreground="{StaticResource BrandPetroleum}" />
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+
+            <StackPanel Visibility="{Binding ShowingNotes, Converter={StaticResource BooleanToVisibilityConverter}}">
+              <TextBlock Text="NOTAS CONECTADAS" Margin="0,0,0,11" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource TextSubtle}" />
+              <ItemsControl ItemsSource="{Binding ConnectedNotes}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Border Margin="0,0,0,7" Padding="11,9" BorderBrush="#E7F0F3" BorderThickness="1" CornerRadius="9">
+                      <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="22" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <TextBlock Text="▤" Foreground="{StaticResource BrandTeal}" FontSize="15" />
+                        <TextBlock Grid.Column="1" Text="{Binding Title}" FontSize="12" Foreground="{StaticResource TextPrimary}" TextWrapping="Wrap" />
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+
+            <StackPanel Visibility="{Binding ShowingHistory, Converter={StaticResource BooleanToVisibilityConverter}}">
+              <TextBlock Text="ESTADO DEL DOCUMENTO" Margin="0,0,0,12" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource TextSubtle}" />
+              <Border Padding="13" Background="{StaticResource SoftGreen}" BorderBrush="#BFE6CE" BorderThickness="1" CornerRadius="10">
+                <StackPanel>
+                  <TextBlock Text="✓ Guardado localmente" FontSize="12.5" FontWeight="SemiBold" Foreground="#27864F" />
+                  <TextBlock Text="Los cambios de esta sesión permanecen en el editor hasta cerrar el espacio de trabajo."
+                             Margin="0,5,0,0" FontSize="11.5" Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
+                </StackPanel>
+              </Border>
+            </StackPanel>
+          </StackPanel>
+        </ScrollViewer>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

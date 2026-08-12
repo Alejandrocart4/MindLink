@@ -1,0 +1,38 @@
+<UserControl x:Class="MindLink.Presentation.Controls.MindLinkLogo"
+             x:Name="Root"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+  </UserControl.Resources>
+  <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+    <Border Width="{Binding LogoSize, ElementName=Root}"
+            Height="{Binding LogoSize, ElementName=Root}"
+            Background="{StaticResource PrimaryGradient}"
+            CornerRadius="10"
+            Effect="{StaticResource BrandShadow}">
+      <Viewbox Margin="7">
+        <Path Data="{StaticResource LogoBrainGeometry}"
+              Stroke="White"
+              StrokeThickness="1.45"
+              StrokeStartLineCap="Round"
+              StrokeEndLineCap="Round"
+              StrokeLineJoin="Round" />
+      </Viewbox>
+    </Border>
+    <TextBlock Text="MindLink"
+               Margin="10,0,0,0"
+               VerticalAlignment="Center"
+               FontFamily="Segoe UI Variable Display"
+               FontSize="{Binding TextFontSize, ElementName=Root}"
+               FontWeight="Bold"
+               Visibility="{Binding ShowText, ElementName=Root, Converter={StaticResource BooleanToVisibility}}">
+      <TextBlock.Foreground>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+          <GradientStop Color="#003280" Offset="0" />
+          <GradientStop Color="#009BA9" Offset="1" />
+        </LinearGradientBrush>
+      </TextBlock.Foreground>
+    </TextBlock>
+  </StackPanel>
+</UserControl>

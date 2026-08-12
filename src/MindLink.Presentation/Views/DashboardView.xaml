@@ -1,0 +1,187 @@
+<UserControl x:Class="MindLink.Presentation.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:MindLink.Application.Models;assembly=MindLink.Application"
+             xmlns:vm="clr-namespace:MindLink.Presentation.ViewModels"
+             Background="{StaticResource AppBackground}">
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Margin="32,28,32,34">
+      <TextBlock Style="{StaticResource PageTitle}" FontSize="22" Text="{Binding Greeting}" />
+      <TextBlock Text="Tienes 3 tareas pendientes y 2 referencias sin clasificar en tu proyecto activo."
+                 Foreground="{StaticResource TextMuted}" FontSize="13" Margin="0,8,0,0" />
+
+      <ItemsControl ItemsSource="{Binding QuickActions}" Margin="0,28,0,0">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate DataType="{x:Type models:WorkspaceQuickAction}">
+            <Button Style="{StaticResource SecondaryButton}" Padding="16,10" Margin="0,0,12,0"
+                    Command="{Binding DataContext.QuickActionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                    CommandParameter="{Binding Route}">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="13" Foreground="{StaticResource BrandPetroleum}" Margin="0,0,9,0">
+                  <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="Text" Value="&#xE70B;" />
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IconKey}" Value="AddReference"><Setter Property="Text" Value="&#xE82D;" /></DataTrigger>
+                        <DataTrigger Binding="{Binding IconKey}" Value="AddConnection"><Setter Property="Text" Value="&#xE968;" /></DataTrigger>
+                        <DataTrigger Binding="{Binding IconKey}" Value="ImportDocument"><Setter Property="Text" Value="&#xE898;" /></DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </TextBlock.Style>
+                </TextBlock>
+                <TextBlock Text="{Binding Label}" Foreground="{StaticResource BrandBlue}" FontSize="12" FontWeight="SemiBold" />
+              </StackPanel>
+            </Button>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <ItemsControl ItemsSource="{Binding Metrics}" Margin="0,28,0,0">
+        <ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="4" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate DataType="{x:Type vm:DashboardMetricViewModel}">
+            <Border Style="{StaticResource CompactCard}" Margin="0,0,14,0" MinHeight="132">
+              <Grid>
+                <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+                <DockPanel>
+                  <Border x:Name="IconBackground" DockPanel.Dock="Left" Width="36" Height="36" CornerRadius="10" Background="{StaticResource SoftBlue}">
+                    <TextBlock x:Name="Icon" Text="{Binding IconGlyph}" FontFamily="Segoe MDL2 Assets" Foreground="{StaticResource BrandBlue}"
+                               FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <Border DockPanel.Dock="Right" Width="23" Height="23" CornerRadius="12" Background="{StaticResource SoftGreen}" HorizontalAlignment="Right">
+                    <TextBlock Text="↑" Foreground="{StaticResource Success}" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                </DockPanel>
+                <StackPanel Grid.Row="1" Margin="0,10,0,0">
+                  <TextBlock Text="{Binding Value}" FontFamily="Consolas" FontSize="25" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" />
+                  <TextBlock Text="{Binding Label}" Foreground="{StaticResource TextMuted}" FontSize="11.5" Margin="0,3,0,0" />
+                  <TextBlock Text="{Binding Detail}" Foreground="#83A6B7" FontSize="10.5" Margin="0,4,0,0" />
+                </StackPanel>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <Grid Margin="0,24,0,0">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="340" /></Grid.ColumnDefinitions>
+
+        <StackPanel Margin="0,0,18,0">
+          <Border Style="{StaticResource Card}" Padding="20,18">
+            <StackPanel>
+              <DockPanel>
+                <TextBlock Text="Proyectos recientes" Style="{StaticResource SectionTitle}" FontSize="14" />
+                <Button DockPanel.Dock="Right" Style="{StaticResource TextButton}" Command="{Binding OpenProjectsCommand}"
+                        Content="Ver todos →" Foreground="{StaticResource BrandTealDark}" FontSize="11" />
+              </DockPanel>
+              <ItemsControl ItemsSource="{Binding RecentProjects}" Margin="0,13,0,0">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate DataType="{x:Type models:WorkspaceProject}">
+                    <Button Style="{StaticResource TextButton}" Padding="0" Margin="0,0,0,10"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                            Command="{Binding DataContext.OpenProjectCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                            CommandParameter="{Binding}">
+                      <Border BorderBrush="#E4EEF2" BorderThickness="1" CornerRadius="9" Padding="13,10"
+                              Background="White" HorizontalAlignment="Stretch">
+                        <StackPanel>
+                          <DockPanel LastChildFill="False">
+                            <TextBlock DockPanel.Dock="Left" Text="{Binding ShortTitle}" FontWeight="SemiBold" FontSize="11.5" Foreground="{StaticResource BrandNavy}" />
+                            <Border DockPanel.Dock="Right" Padding="8,2" CornerRadius="10" Background="{StaticResource SoftTeal}">
+                              <TextBlock Text="{Binding Status}" Foreground="{StaticResource BrandTealDark}" FontSize="9.5" />
+                            </Border>
+                          </DockPanel>
+                          <ProgressBar Style="{StaticResource MindLinkProgress}" Value="{Binding Progress}" Maximum="100" Margin="0,8,0,0" />
+                          <DockPanel Margin="0,7,0,0" LastChildFill="False">
+                            <TextBlock DockPanel.Dock="Left"><Run Text="{Binding NotesCount, Mode=OneWay}" /><Run Text=" notas    " /><Run Text="{Binding ReferencesCount, Mode=OneWay}" /><Run Text=" refs" /></TextBlock>
+                            <TextBlock DockPanel.Dock="Right" Text="{Binding UpdatedLabel}" Foreground="#8FAAB8" FontSize="9.5" />
+                          </DockPanel>
+                        </StackPanel>
+                      </Border>
+                    </Button>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </Border>
+
+          <Border Margin="0,18,0,0" Padding="20,17" Background="{StaticResource WelcomeGradient}" CornerRadius="12" Height="145">
+            <Grid>
+              <DockPanel VerticalAlignment="Top">
+                <TextBlock Text="Red de conocimiento" Foreground="White" FontSize="13" FontWeight="SemiBold" />
+                <Button DockPanel.Dock="Right" Command="{Binding OpenNetworkCommand}" Style="{StaticResource TextButton}"
+                        Content="241 conexiones → Ver mapa" Foreground="{StaticResource BrandTeal}" FontSize="10.5" />
+              </DockPanel>
+              <Canvas Width="420" Height="82" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                <Line X1="85" Y1="43" X2="160" Y2="20" Stroke="#55009BA9" StrokeDashArray="3 3" />
+                <Line X1="85" Y1="43" X2="190" Y2="63" Stroke="#55009BA9" StrokeDashArray="3 3" />
+                <Line X1="160" Y1="20" X2="260" Y2="45" Stroke="#55009BA9" StrokeDashArray="3 3" />
+                <Line X1="190" Y1="63" X2="260" Y2="45" Stroke="#55009BA9" StrokeDashArray="3 3" />
+                <Line X1="260" Y1="45" X2="335" Y2="22" Stroke="#55009BA9" StrokeDashArray="3 3" />
+                <Border Canvas.Left="64" Canvas.Top="22" Width="42" Height="42" CornerRadius="21" Background="#33009BA9" BorderBrush="#99009BA9" BorderThickness="1"><TextBlock Text="IA" Foreground="White" FontSize="8" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+                <Border Canvas.Left="144" Canvas.Top="4" Width="32" Height="32" CornerRadius="16" Background="#33006293" BorderBrush="#99006293" BorderThickness="1"><TextBlock Text="Ed." Foreground="White" FontSize="7" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+                <Border Canvas.Left="175" Canvas.Top="48" Width="30" Height="30" CornerRadius="15" Background="#33007F9D" BorderBrush="#99007F9D" BorderThickness="1"><TextBlock Text="Datos" Foreground="White" FontSize="6.5" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+                <Border Canvas.Left="238" Canvas.Top="23" Width="44" Height="44" CornerRadius="22" Background="#44009BA9" BorderBrush="#BB009BA9" BorderThickness="1"><TextBlock Text="Aprendizaje" Foreground="White" FontSize="6.5" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+                <Border Canvas.Left="320" Canvas.Top="7" Width="30" Height="30" CornerRadius="15" Background="#33003280" BorderBrush="#99006293" BorderThickness="1"><TextBlock Text="Ética" Foreground="White" FontSize="6.5" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+              </Canvas>
+            </Grid>
+          </Border>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1">
+          <Border Style="{StaticResource Card}" Padding="20,18">
+            <StackPanel>
+              <TextBlock Text="Actividad reciente" Style="{StaticResource SectionTitle}" FontSize="14" />
+              <ItemsControl ItemsSource="{Binding RecentActivity}" Margin="0,10,0,0">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate DataType="{x:Type models:WorkspaceActivity}">
+                    <Grid Margin="0,0,0,0">
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="18" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                      <Ellipse Width="7" Height="7" Fill="{StaticResource BrandPetroleum}" VerticalAlignment="Top" Margin="0,7,0,0" />
+                      <StackPanel Grid.Column="1">
+                        <TextBlock FontSize="10.8" LineHeight="16" TextWrapping="Wrap" Foreground="{DynamicResource TextPrimary}">
+                          <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0}: {1}">
+                              <Binding Path="Title" Mode="OneWay" />
+                              <Binding Path="Detail" Mode="OneWay" />
+                            </MultiBinding>
+                          </TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock Text="{Binding TimeLabel}" FontSize="9.5" Foreground="#8CADBD" Margin="0,4,0,0" />
+                        <Border Height="1" Background="#E8F0F3" Margin="0,10,0,10" />
+                      </StackPanel>
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </Border>
+
+          <Border Style="{StaticResource Card}" Padding="20,18" Margin="0,18,0,0">
+            <StackPanel>
+              <TextBlock Text="Pendientes" Style="{StaticResource SectionTitle}" FontSize="14" />
+              <ItemsControl ItemsSource="{Binding PendingTasks}" Margin="0,11,0,0">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate DataType="{x:Type models:WorkspaceTask}">
+                    <Border BorderBrush="#F3D0CB" BorderThickness="1" Background="#FFF9F8" CornerRadius="8" Padding="10" Margin="0,0,0,8">
+                      <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="22" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                        <Button Width="15" Height="15" Padding="0" Background="White" BorderBrush="{StaticResource Danger}" BorderThickness="1" Cursor="Hand"
+                                Command="{Binding DataContext.CompleteTaskCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" />
+                        <StackPanel Grid.Column="1"><TextBlock Text="{Binding Title}" FontSize="10.5" TextWrapping="Wrap" /><TextBlock Text="{Binding DueLabel}" Foreground="#A78179" FontSize="9" Margin="0,3,0,0" /></StackPanel>
+                        <Border Grid.Column="2" Background="#FDE9E5" CornerRadius="9" Padding="7,2" VerticalAlignment="Top"><TextBlock Text="{Binding Priority}" Foreground="#C65D4F" FontSize="8.5" /></Border>
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Text="{Binding FeedbackMessage}" Foreground="{StaticResource Success}" FontSize="10.5" TextWrapping="Wrap" />
+            </StackPanel>
+          </Border>
+        </StackPanel>
+      </Grid>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

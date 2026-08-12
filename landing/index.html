@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MindLink transforma notas, fuentes e ideas dispersas en una investigación clara y lista para escribir." />
+  <title>MindLink — Del conocimiento a una narrativa clara</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="brand.css" />
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Ir al contenido</a>
+  <header class="site-header" id="inicio">
+    <nav class="nav container" aria-label="Navegación principal">
+      <a class="brand brand-original-frame" href="#inicio" aria-label="MindLink, inicio">
+        <img class="brand-original-image" src="mindlink-logo-horizontal-transparent.png" alt="" width="997" height="272" />
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menú</button>
+      <div class="nav-links" id="nav-links">
+        <a href="#problema">El problema</a><a href="#como-funciona">Cómo funciona</a><a href="#caracteristicas">Características</a>
+        <a class="button button-small" href="#lista-espera">Acceso anticipado</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="contenido">
+    <section class="hero container">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span> Tu espacio intelectual, en un solo lugar</p>
+        <h1>Del conocimiento fragmentado a una <em>narrativa clara.</em></h1>
+        <p class="hero-description">MindLink reúne tus notas, fuentes e ideas para que puedas investigar, conectar argumentos y escribir sin perder el contexto.</p>
+        <div class="hero-actions"><a class="button" href="#lista-espera">Quiero acceso anticipado <span>→</span></a><button class="button button-ghost js-video-trigger" type="button">▶ Ver demostración</button></div>
+        <div class="trust"><span class="trust-dot">●</span><span>Diseñado para trabajar localmente y mantener tus ideas contigo.</span></div>
+      </div>
+      <div class="video-showcase" id="video-showcase">
+        <video class="mindlink-video" id="mindlink-video" autoplay muted loop playsinline preload="auto" aria-describedby="video-comment">
+          <source src="videos/mindlink-propuesta-valor.mp4" type="video/mp4" />
+          Tu navegador no puede reproducir este video. <a href="videos/mindlink-propuesta-valor.mp4">Descárgalo aquí</a>.
+        </video>
+        <button class="video-expand-surface" id="video-expand-button" type="button" aria-label="Ampliar demostración de MindLink"></button>
+        <p class="video-comment" id="video-comment">Todo tu proceso de investigación, en un solo espacio.</p>
+        <span class="video-expand-hint" aria-hidden="true"><span>⛶</span><span class="video-expand-label">Clic para ampliar</span></span>
+        <div class="video-controls" role="group" aria-label="Controles del video">
+          <button class="video-control-button video-play-toggle" id="video-play-toggle" type="button" aria-label="Pausar video">
+            <svg class="control-icon control-icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7V5Zm6 0h4v14h-4V5Z" /></svg>
+            <svg class="control-icon control-icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7V5Z" /></svg>
+          </button>
+          <button class="video-control-button video-mute-button" id="video-mute-button" type="button" aria-pressed="true">
+            <svg class="control-icon mute-icon-sound" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Zm12.5 3a4.5 4.5 0 0 0-2.1-3.8v7.6a4.5 4.5 0 0 0 2.1-3.8Zm-2.1-8.7v2.1a7.5 7.5 0 0 1 0 13.2v2.1a9.5 9.5 0 0 0 0-17.4Z" /></svg>
+            <svg class="control-icon mute-icon-muted" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Zm11.4 1.2 1.6 1.6 1.6-1.6 1.2 1.2-1.6 1.6 1.6 1.6-1.2 1.2-1.6-1.6-1.6 1.6-1.2-1.2 1.6-1.6-1.6-1.6 1.2-1.2Z" /></svg>
+            <span class="video-mute-label">Activar sonido</span>
+          </button>
+        </div>
+        <button class="video-close-button" id="video-close-button" type="button" aria-label="Cerrar video ampliado">×</button>
+      </div>
+    </section>
+
+    <section class="problem-section" id="problema"><div class="container split-section">
+      <div><p class="eyebrow"><span></span> El problema</p><h2>Investigar no debería sentirse como perseguir archivos.</h2></div>
+      <p class="section-lead">Cuando cada nota, PDF, enlace y borrador vive en un lugar distinto, el trabajo intelectual se vuelve más lento, pesado y difícil de retomar.</p>
+    </div>
+      <div class="container pain-grid">
+        <article><span class="number">01</span><h3>El contexto se rompe</h3><p>Alternas entre documentos, pestañas y aplicaciones para entender una sola idea.</p></article>
+        <article><span class="number">02</span><h3>La evidencia se pierde</h3><p>Cuando redactas, encontrar la fuente que respaldaba un argumento toma demasiado tiempo.</p></article>
+        <article><span class="number">03</span><h3>Las ideas quedan aisladas</h3><p>Las conexiones valiosas no se ven, y la narrativa pierde fuerza antes de comenzar.</p></article>
+      </div>
+    </section>
+
+    <section class="workflow container" id="como-funciona"><div class="workflow-heading"><p class="eyebrow"><span></span> Cómo funciona</p><h2>Una forma más clara de avanzar.</h2><p>MindLink acompaña el recorrido natural de una investigación: capturar, conectar y construir.</p></div>
+      <div class="steps"><article class="step"><span>1</span><div><h3>Captura</h3><p>Guarda hallazgos, preguntas y fuentes en proyectos que sí entienden tu contexto.</p></div></article><article class="step"><span>2</span><div><h3>Conecta</h3><p>Relaciona ideas y evidencia para descubrir la estructura detrás de tu investigación.</p></div></article><article class="step"><span>3</span><div><h3>Construye</h3><p>Convierte ese conocimiento en una narrativa preparada para redactar y revisar.</p></div></article></div>
+    </section>
+
+    <section class="features-section" id="caracteristicas"><div class="container"><div class="features-heading"><p class="eyebrow"><span></span> Características esenciales</p><h2>Hecho para pensar con profundidad,<br />no para llenar formularios.</h2></div>
+      <div class="features-grid"><article class="feature feature-highlight"><div class="feature-icon">⌁</div><h3>Mapa de conocimiento</h3><p>Visualiza las relaciones entre ideas, argumentos y evidencia para no perder el hilo.</p><div class="mini-map"><b></b><b></b><b></b><i></i><i></i></div></article><article class="feature"><div class="feature-icon">✦</div><h3>Notas con contexto</h3><p>Captura cada hallazgo dentro de un proyecto, con etiquetas y propósito claro.</p></article><article class="feature"><div class="feature-icon">↗</div><h3>Fuentes vinculadas</h3><p>Conserva la evidencia cerca de las ideas y secciones que respalda.</p></article><article class="feature"><div class="feature-icon">✎</div><h3>De investigación a borrador</h3><p>Construye la estructura de tu narrativa antes de enfrentarte a la página en blanco.</p></article><article class="feature"><div class="feature-icon">⌂</div><h3>Local y privado</h3><p>Tu trabajo se mantiene en tu equipo, sin depender de conexión constante.</p></article></div>
+    </div></section>
+
+    <section class="waitlist container" id="lista-espera"><div class="waitlist-copy"><p class="eyebrow"><span></span> Acceso anticipado</p><h2>Construyamos una mejor forma de pensar y escribir.</h2><p>Únete a la lista de espera y ayúdanos a crear MindLink con personas que investigan de verdad.</p><ul><li>Acceso temprano al prototipo</li><li>Invitación a pruebas de producto</li><li>Sin spam. Solo novedades relevantes.</li></ul></div>
+      <form class="waitlist-form" id="waitlist-form" name="mindlink-waitlist" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" novalidate>
+        <input type="hidden" name="form-name" value="mindlink-waitlist" />
+        <p class="honeypot" aria-hidden="true">
+          <label>No completes este campo: <input name="bot-field" type="text" tabindex="-1" autocomplete="off" /></label>
+        </p>
+        <h3>Reserva tu lugar</h3>
+        <p>Cuéntanos qué tipo de trabajo quieres transformar.</p>
+
+        <label for="name">Nombre <span>opcional</span></label>
+        <input id="name" name="name" type="text" maxlength="80" autocomplete="name" placeholder="Tu nombre" />
+
+        <label for="email">Correo electrónico</label>
+        <input id="email" name="email" type="email" maxlength="160" autocomplete="email" placeholder="tu@correo.com" required />
+        <p class="field-error" id="email-error" aria-live="polite"></p>
+
+        <label for="purpose">Principalmente investigarás para…</label>
+        <select id="purpose" name="purpose" required>
+          <option value="">Selecciona una opción</option>
+          <option>Tesis o trabajo universitario</option>
+          <option>Artículo académico</option>
+          <option>Ensayo o investigación personal</option>
+          <option>Contenido especializado</option>
+          <option>Otro</option>
+        </select>
+        <p class="field-error" id="purpose-error" aria-live="polite"></p>
+
+        <div class="conditional-field" id="other-purpose-field" hidden>
+          <label for="other-purpose">¿Cuál otro?</label>
+          <input id="other-purpose" name="otherPurpose" type="text" maxlength="120" placeholder="Ejemplo: novela histórica" />
+          <p class="field-error" id="other-purpose-error" aria-live="polite"></p>
+        </div>
+
+        <button class="button" type="submit">Unirme a la lista de espera <span>→</span></button>
+        <p class="form-note">Al registrarte aceptas recibir novedades de MindLink.</p>
+        <p class="submission-error" id="submission-error" role="alert" hidden></p>
+
+        <div class="success-message" id="success-message" role="status" aria-live="polite" hidden>
+          <span>✓</span>
+          <div>
+            <strong>¡Tu lugar está reservado!</strong>
+            <p>Te enviamos un correo de confirmación. Revisa tu bandeja de entrada y, si no aparece, las carpetas “No deseado” o “Spam”.</p>
+          </div>
+        </div>
+      </form>
+    </section>
+  </main>
+  <footer><div class="container footer-content"><a class="brand brand-original-frame" href="#inicio" aria-label="MindLink, inicio"><img class="brand-original-image" src="mindlink-logo-horizontal-transparent.png" alt="" width="997" height="272" /></a><p>Del conocimiento fragmentado a una narrativa clara.</p><span>© <span id="year"></span> MindLink</span></div></footer>
+  <script src="script.js"></script>
+</body>
+</html>
