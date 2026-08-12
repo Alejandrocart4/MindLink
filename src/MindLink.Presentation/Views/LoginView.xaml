@@ -3,7 +3,10 @@
     <Grid.ColumnDefinitions><ColumnDefinition Width="1.1*"/><ColumnDefinition Width="0.9*"/></Grid.ColumnDefinitions>
     <Grid Background="#111827">
       <Grid Margin="72"><StackPanel VerticalAlignment="Center">
-        <controls:MindLinkLogo LogoSize="78" TextFontSize="52" TextForeground="White" HorizontalAlignment="Left" Margin="0,0,0,28"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,28">
+          <controls:MindLinkBrand Size="78" />
+          <TextBlock Text="MindLink" Margin="20,0,0,0" Foreground="White" FontSize="52" FontWeight="Bold" VerticalAlignment="Center" />
+        </StackPanel>
         <TextBlock Text="Del conocimiento fragmentado a una narrativa clara." Foreground="#C7D2FE" FontSize="20" TextWrapping="Wrap"/>
         <Border Background="#1E293B" CornerRadius="14" Padding="22" Margin="0,46,0,0"><StackPanel>
           <TextBlock Text="Tu espacio intelectual, en un solo lugar" Foreground="White" FontSize="16" FontWeight="SemiBold"/>

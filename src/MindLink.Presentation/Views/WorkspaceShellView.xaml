@@ -56,8 +56,11 @@
     <Border Background="#011A46" BorderBrush="#0D3261" BorderThickness="0,0,1,0">
       <DockPanel LastChildFill="True">
         <Grid DockPanel.Dock="Top" Height="68">
-          <controls:MindLinkLogo LogoSize="31" TextFontSize="16" TextForeground="White" ShowText="{Binding IsSidebarExpanded}"
-                                 HorizontalAlignment="Left" Margin="16,0,0,0" />
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="16,0,0,0">
+            <controls:MindLinkBrand Size="31" />
+            <TextBlock Text="MindLink" Margin="9,0,0,0" Foreground="White" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"
+                       Visibility="{Binding IsSidebarExpanded, Converter={StaticResource BooleanToVisibility}}" />
+          </StackPanel>
           <Button Command="{Binding ToggleSidebarCommand}"
                   HorizontalAlignment="Right" Width="34" Height="34" Margin="0,0,8,0"
                   Foreground="#6B8FA3" Content="‹" FontSize="18">

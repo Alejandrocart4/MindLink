@@ -517,7 +517,10 @@
                      FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" />
           <Border Style="{StaticResource SettingsCard}" Padding="32,28">
             <StackPanel HorizontalAlignment="Center">
-              <controls:MindLinkLogo LogoSize="44" TextFontSize="25" HorizontalAlignment="Center" />
+              <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <controls:MindLinkBrand Size="44" />
+                <TextBlock Text="MindLink" Margin="12,0,0,0" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" Foreground="{StaticResource BrandBlue}" />
+              </StackPanel>
               <TextBlock Text="MindLink v1.4.2" Margin="0,16,0,4" HorizontalAlignment="Center"
                          FontFamily="Segoe UI Variable Display" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource BrandBlue}" />
               <TextBlock HorizontalAlignment="Center" TextAlignment="Center" FontSize="13.5"

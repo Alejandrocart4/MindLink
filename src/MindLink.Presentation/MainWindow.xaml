@@ -88,7 +88,8 @@
           <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
-          <controls:MindLinkLogo LogoSize="20" TextFontSize="12" TextForeground="White" />
+          <controls:MindLinkBrand Size="20" />
+          <TextBlock Text="MindLink" Margin="7,0,0,0" Foreground="White" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" />
           <TextBlock Text="  ·  Espacio de investigación local" Foreground="#82A9BB"
                      FontSize="10.5" VerticalAlignment="Center" />
         </StackPanel>
