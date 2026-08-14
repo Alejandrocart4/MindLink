@@ -10,18 +10,15 @@
         <TextBlock Text="Del conocimiento fragmentado a una narrativa clara." Foreground="#C7D2FE" FontSize="20" TextWrapping="Wrap"/>
         <Border Background="#1E293B" CornerRadius="14" Padding="22" Margin="0,46,0,0"><StackPanel>
           <TextBlock Text="Tu espacio intelectual, en un solo lugar" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
-          <TextBlock Text="Inicia sesi&#xF3;n con tu cuenta Free o Pro para acceder a un espacio local vac&#xED;o y listo para usar." Foreground="#CBD5E1" Margin="0,9,0,0" TextWrapping="Wrap" FontSize="14"/>
+          <TextBlock Text="Inicia sesi&#xF3;n para acceder a tu espacio local de investigaci&#xF3;n." Foreground="#CBD5E1" Margin="0,9,0,0" TextWrapping="Wrap" FontSize="14"/>
         </StackPanel></Border>
       </StackPanel></Grid>
     </Grid>
     <Grid Grid.Column="1" Background="#F8FAFC"><Border Style="{StaticResource Card}" Width="400" Padding="36" VerticalAlignment="Center" HorizontalAlignment="Center"><StackPanel>
       <TextBlock Text="Inicia sesi&#xF3;n" FontSize="26" FontWeight="Bold"/>
-      <TextBlock Text="Elige la cuenta con la que quieres verificar MindLink." Foreground="{StaticResource TextMuted}" Margin="0,8,0,20"/>
+      <TextBlock Text="Accede a tu espacio de investigaci&#xF3;n." Foreground="{StaticResource TextMuted}" Margin="0,8,0,20"/>
       <TextBlock Text="Acceso r&#xE1;pido" FontWeight="SemiBold" Foreground="{StaticResource TextSecondary}"/>
-      <Grid Margin="0,8,0,22"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-        <Button Grid.Column="0" Style="{StaticResource SecondaryButton}" Content="Usar cuenta Free" Padding="10,9" Click="UseFreeAccount_Click"/>
-        <Button Grid.Column="2" Style="{StaticResource PrimaryButton}" Content="Usar cuenta Pro" Padding="10,9" Click="UseProAccount_Click"/>
-      </Grid>
+      <Button Style="{StaticResource PrimaryButton}" Content="Usar cuenta Pro" Padding="10,9" Margin="0,8,0,22" Click="UseProAccount_Click"/>
       <TextBlock Text="Correo electr&#xF3;nico" FontWeight="SemiBold"/>
       <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputBox}" Margin="0,7,0,18"/>
       <TextBlock Text="Contrase&#xF1;a" FontWeight="SemiBold"/>
@@ -29,9 +26,8 @@
       <TextBlock Text="{Binding ErrorMessage}" Foreground="#DC2626" TextWrapping="Wrap" MinHeight="22"/>
       <Button Style="{StaticResource PrimaryButton}" Command="{Binding SignInCommand}" Margin="0,12,0,0" Content="Abrir mi espacio"/>
       <Border Background="#EEF7F8" BorderBrush="#B9E1E4" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,22,0,0"><StackPanel>
-        <TextBlock Text="Cuentas de prueba" FontWeight="SemiBold" Foreground="#006B76"/>
-        <TextBlock Text="Free: free@mindlink.local" Foreground="{StaticResource TextMuted}" FontSize="12" Margin="0,7,0,0"/>
-        <TextBlock Text="Pro: pro@mindlink.local" Foreground="{StaticResource TextMuted}" FontSize="12" Margin="0,3,0,0"/>
+        <TextBlock Text="Cuenta Pro" FontWeight="SemiBold" Foreground="#006B76"/>
+        <TextBlock Text="Jonny · pro@mindlink.local" Foreground="{StaticResource TextMuted}" FontSize="12" Margin="0,7,0,0"/>
       </StackPanel></Border>
     </StackPanel></Border></Grid>
   </Grid>

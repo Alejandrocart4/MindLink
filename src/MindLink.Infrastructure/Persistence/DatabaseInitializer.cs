@@ -19,7 +19,7 @@ public sealed class DatabaseInitializer(MindLinkDbContext database)
 
         var now = DateTime.Now;
         await EnsureAccountAsync("Cuenta Free", "free@mindlink.local", "MindLinkFree2026!", "Free", now);
-        await EnsureAccountAsync("Cuenta Pro", "pro@mindlink.local", "MindLinkPro2026!", "Pro", now);
+        await EnsureAccountAsync("Jonny", "pro@mindlink.local", "MindLinkPro2026!", "Pro", now);
         await database.SaveChangesAsync();
     }
 
