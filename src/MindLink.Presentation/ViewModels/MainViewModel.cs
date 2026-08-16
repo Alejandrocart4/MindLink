@@ -9,7 +9,7 @@ public sealed class MainViewModel : ObservableObject
     public MainViewModel(NavigationService navigation)
     {
         navigation.RootNavigated += viewModel => CurrentViewModel = viewModel;
-        navigation.ShowWelcome();
+        navigation.ShowLogin();
     }
 
     public ObservableObject? CurrentViewModel

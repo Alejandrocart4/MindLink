@@ -1,6 +1,34 @@
-<UserControl x:Class="MindLink.Presentation.Views.LoginView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
- <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="1.1*"/><ColumnDefinition Width="0.9*"/></Grid.ColumnDefinitions>
-  <Grid Background="#111827"><Grid Margin="72"><StackPanel VerticalAlignment="Center"><Border Width="56" Height="56" CornerRadius="16" Background="#6366F1" HorizontalAlignment="Left"><TextBlock Text="✦" Foreground="White" FontSize="31" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><TextBlock Text="MindLink" Foreground="White" FontSize="42" FontWeight="Bold" Margin="0,28,0,8"/><TextBlock Text="Del conocimiento fragmentado a una narrativa clara." Foreground="#C7D2FE" FontSize="20" TextWrapping="Wrap"/><Border Background="#1E293B" CornerRadius="14" Padding="22" Margin="0,46,0,0"><StackPanel><TextBlock Text="Tu espacio intelectual, en un solo lugar" Foreground="White" FontSize="16" FontWeight="SemiBold"/><TextBlock Text="Organiza fuentes, conecta ideas y avanza con intención, incluso sin conexión." Foreground="#CBD5E1" Margin="0,9,0,0" TextWrapping="Wrap" FontSize="14"/><StackPanel Orientation="Horizontal" Margin="0,18,0,0"><TextBlock Text="●" Foreground="#34D399" FontSize="18"/><TextBlock Text=" Trabajo local y privado" Foreground="#E2E8F0" VerticalAlignment="Center"/></StackPanel></StackPanel></Border></StackPanel></Grid></Grid>
-  <Grid Grid.Column="1" Background="#F8FAFC"><Border Style="{StaticResource Card}" Width="400" Padding="36" VerticalAlignment="Center" HorizontalAlignment="Center"><StackPanel><TextBlock Text="Bienvenido de nuevo" FontSize="26" FontWeight="Bold"/><TextBlock Text="Entra a tu espacio de investigación." Foreground="{StaticResource TextMuted}" Margin="0,8,0,28"/><TextBlock Text="Correo electrónico" FontWeight="SemiBold"/><TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputBox}" Margin="0,7,0,18"/><TextBlock Text="Contraseña" FontWeight="SemiBold"/><PasswordBox x:Name="PasswordInput" PasswordChanged="PasswordChanged" Margin="0,7,0,12" Padding="12,10" Background="#F8FAFC" BorderBrush="{StaticResource Border}"/><TextBlock Text="{Binding ErrorMessage}" Foreground="#DC2626" TextWrapping="Wrap" MinHeight="22"/><Button Style="{StaticResource PrimaryButton}" Command="{Binding SignInCommand}" Margin="0,12,0,0" Content="Abrir mi espacio"/><TextBlock Text="Demo: jonny@mindlink.local · MindLink2026!" Foreground="{StaticResource TextMuted}" FontSize="12" Margin="0,22,0,0" TextWrapping="Wrap"/></StackPanel></Border></Grid>
- </Grid>
+<UserControl x:Class="MindLink.Presentation.Views.LoginView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="clr-namespace:MindLink.Presentation.Controls">
+  <Grid>
+    <Grid.ColumnDefinitions><ColumnDefinition Width="1.1*"/><ColumnDefinition Width="0.9*"/></Grid.ColumnDefinitions>
+    <Grid Background="#111827">
+      <Grid Margin="72"><StackPanel VerticalAlignment="Center">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,28">
+          <controls:MindLinkBrand Size="78" />
+          <TextBlock Text="MindLink" Margin="20,0,0,0" Foreground="White" FontSize="52" FontWeight="Bold" VerticalAlignment="Center" />
+        </StackPanel>
+        <TextBlock Text="Del conocimiento fragmentado a una narrativa clara." Foreground="#C7D2FE" FontSize="20" TextWrapping="Wrap"/>
+        <Border Background="#1E293B" CornerRadius="14" Padding="22" Margin="0,46,0,0"><StackPanel>
+          <TextBlock Text="Tu espacio intelectual, en un solo lugar" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+          <TextBlock Text="Inicia sesi&#xF3;n para acceder a tu espacio local de investigaci&#xF3;n." Foreground="#CBD5E1" Margin="0,9,0,0" TextWrapping="Wrap" FontSize="14"/>
+        </StackPanel></Border>
+      </StackPanel></Grid>
+    </Grid>
+    <Grid Grid.Column="1" Background="#F8FAFC"><Border Style="{StaticResource Card}" Width="400" Padding="36" VerticalAlignment="Center" HorizontalAlignment="Center"><StackPanel>
+      <TextBlock Text="Inicia sesi&#xF3;n" FontSize="26" FontWeight="Bold"/>
+      <TextBlock Text="Accede a tu espacio de investigaci&#xF3;n." Foreground="{StaticResource TextMuted}" Margin="0,8,0,20"/>
+      <TextBlock Text="Acceso r&#xE1;pido" FontWeight="SemiBold" Foreground="{StaticResource TextSecondary}"/>
+      <Button Style="{StaticResource PrimaryButton}" Content="Usar cuenta Pro" Padding="10,9" Margin="0,8,0,22" Click="UseProAccount_Click"/>
+      <TextBlock Text="Correo electr&#xF3;nico" FontWeight="SemiBold"/>
+      <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputBox}" Margin="0,7,0,18"/>
+      <TextBlock Text="Contrase&#xF1;a" FontWeight="SemiBold"/>
+      <PasswordBox x:Name="PasswordInput" PasswordChanged="PasswordChanged" Margin="0,7,0,12" Padding="12,10" Background="#F8FAFC" BorderBrush="{StaticResource Border}"/>
+      <TextBlock Text="{Binding ErrorMessage}" Foreground="#DC2626" TextWrapping="Wrap" MinHeight="22"/>
+      <Button Style="{StaticResource PrimaryButton}" Command="{Binding SignInCommand}" Margin="0,12,0,0" Content="Abrir mi espacio"/>
+      <Border Background="#EEF7F8" BorderBrush="#B9E1E4" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,22,0,0"><StackPanel>
+        <TextBlock Text="Cuenta Pro" FontWeight="SemiBold" Foreground="#006B76"/>
+        <TextBlock Text="Jonny · pro@mindlink.local" Foreground="{StaticResource TextMuted}" FontSize="12" Margin="0,7,0,0"/>
+      </StackPanel></Border>
+    </StackPanel></Border></Grid>
+  </Grid>
 </UserControl>

@@ -16,7 +16,10 @@
                Margin="0,0,-90,-90" Opacity="0.05" Fill="{StaticResource BrandBlue}" />
 
       <StackPanel Width="540" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="64,0,0,0">
-        <controls:MindLinkLogo LogoSize="40" TextFontSize="20" HorizontalAlignment="Left" Margin="0,0,0,36" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,36">
+          <controls:MindLinkBrand Size="40" />
+          <TextBlock Text="MindLink" Margin="11,0,0,0" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Foreground="{StaticResource BrandBlue}" />
+        </StackPanel>
 
         <TextBlock Text="Conecta tus ideas."
                    FontFamily="Segoe UI Variable Display" FontSize="42" FontWeight="Bold"

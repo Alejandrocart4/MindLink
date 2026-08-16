@@ -225,6 +225,11 @@ public sealed class KnowledgeNodeItemViewModel : ObservableObject
     public double HaloLeft => X - Diameter / 2 - 12;
     public double HaloTop => Y - Diameter / 2 - 12;
     public double HaloDiameter => Diameter + 24;
+    public double CardLeft => X - 68;
+    public double CardTop => Y - 68;
+    public double OuterDiameter => Diameter + 8;
+    public double LabelWidth => Math.Max(36, Diameter - 12);
+    public double LabelFontSize => Diameter >= 90 ? 11.5 : 10;
 
     public bool IsSelected
     {
@@ -281,19 +286,19 @@ public sealed class KnowledgeNodeItemViewModel : ObservableObject
 
     private static (double X, double Y, double Diameter) ResolveLayout(KnowledgeNode node) => node.Id switch
     {
-        "node-project-ai" => (380, 200, 76),
-        "node-adaptive-ai" => (230, 110, 56),
-        "node-personalized-learning" => (540, 120, 60),
-        "node-algorithmic-ethics" => (170, 270, 48),
-        "node-lms" => (320, 310, 44),
-        "node-selwyn" => (530, 300, 40),
-        "node-unesco" => (600, 220, 40),
-        "node-automated-feedback" => (120, 160, 36),
-        "node-risks" => (440, 340, 36),
-        "node-power-quote" => (280, 370, 32),
-        "node-education-personalization" => (650, 150, 36),
-        "node-bias" => (100, 330, 32),
-        _ => (node.X * 700, node.Y * 420, Math.Clamp(node.Size * 48, 34, 78))
+        "node-project" or "node-project-ai" => (350, 190, 110),
+        "node-barriers" or "node-adaptive-ai" => (150, 95, 88),
+        "node-impact" or "node-personalized-learning" => (550, 95, 96),
+        "node-iea" or "node-algorithmic-ethics" => (165, 320, 76),
+        "node-irena" or "node-selwyn" => (535, 320, 76),
+        "node-quote" or "node-power-quote" => (350, 360, 74),
+        "node-lms" => (320, 310, 68),
+        "node-unesco" => (600, 220, 68),
+        "node-automated-feedback" => (120, 160, 64),
+        "node-risks" => (440, 340, 64),
+        "node-education-personalization" => (650, 150, 64),
+        "node-bias" => (100, 330, 62),
+        _ => (node.X * 700, node.Y * 420, Math.Clamp(node.Size * 60, 64, 110))
     };
 
     private static string ResolveKind(KnowledgeNode node) => node.Id switch

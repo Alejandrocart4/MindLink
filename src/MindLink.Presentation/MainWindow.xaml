@@ -4,6 +4,7 @@
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         xmlns:views="clr-namespace:MindLink.Presentation.Views"
         xmlns:vm="clr-namespace:MindLink.Presentation.ViewModels"
+        xmlns:controls="clr-namespace:MindLink.Presentation.Controls"
         Title="MindLink"
         Width="1540" Height="900"
         MinWidth="1180" MinHeight="720"
@@ -29,8 +30,8 @@
       <Setter Property="Foreground" Value="#DCEAF1" />
       <Setter Property="BorderThickness" Value="0" />
       <Setter Property="Cursor" Value="Hand" />
-      <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
-      <Setter Property="FontSize" Value="10" />
+      <Setter Property="FontFamily" Value="Segoe UI Symbol" />
+      <Setter Property="FontSize" Value="17" />
       <Setter Property="FocusVisualStyle" Value="{x:Null}" />
       <Setter Property="Template">
         <Setter.Value>
@@ -61,6 +62,7 @@
       </Style.Triggers>
     </Style>
     <DataTemplate DataType="{x:Type vm:WelcomeViewModel}"><views:WelcomeView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:LoginViewModel}"><views:LoginView /></DataTemplate>
     <DataTemplate DataType="{x:Type vm:WorkspaceShellViewModel}"><views:WorkspaceShellView /></DataTemplate>
     <DataTemplate DataType="{x:Type vm:DashboardViewModel}"><views:DashboardView /></DataTemplate>
     <DataTemplate DataType="{x:Type vm:ProjectsViewModel}"><views:ProjectsView /></DataTemplate>
@@ -86,37 +88,33 @@
           <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
-          <Border Width="20" Height="20" CornerRadius="6" Background="{StaticResource PrimaryGradient}">
-            <TextBlock Text="&#xE8D4;" FontFamily="Segoe MDL2 Assets" FontSize="10"
-                       Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
-          </Border>
-          <TextBlock Text="MindLink" Margin="8,0,0,0" Foreground="White" FontSize="12"
-                     FontWeight="SemiBold" VerticalAlignment="Center" />
+          <controls:MindLinkBrand Size="20" />
+          <TextBlock Text="MindLink" Margin="7,0,0,0" Foreground="White" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" />
           <TextBlock Text="  ·  Espacio de investigación local" Foreground="#82A9BB"
                      FontSize="10.5" VerticalAlignment="Center" />
         </StackPanel>
 
         <StackPanel Grid.Column="1" Orientation="Horizontal" shell:WindowChrome.IsHitTestVisibleInChrome="True">
-          <Button Style="{StaticResource WindowControlButton}" Content="&#xE921;"
+          <Button Style="{StaticResource WindowControlButton}" Content="&#x2212;"
                   AutomationProperties.Name="Minimizar" ToolTip="Minimizar"
                   Click="MinimizeButton_Click" />
           <Button Style="{StaticResource WindowControlButton}"
                   AutomationProperties.Name="Maximizar o restaurar" ToolTip="Maximizar o restaurar"
                   Click="MaximizeRestoreButton_Click">
-            <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="10">
+            <TextBlock FontFamily="Segoe UI Symbol" FontSize="16">
               <TextBlock.Style>
                 <Style TargetType="TextBlock">
-                  <Setter Property="Text" Value="&#xE922;" />
+                  <Setter Property="Text" Value="&#x25A1;" />
                   <Style.Triggers>
                     <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
-                      <Setter Property="Text" Value="&#xE923;" />
+                      <Setter Property="Text" Value="&#x2750;" />
                     </DataTrigger>
                   </Style.Triggers>
                 </Style>
               </TextBlock.Style>
             </TextBlock>
           </Button>
-          <Button Style="{StaticResource CloseWindowButton}" Content="&#xE8BB;"
+          <Button Style="{StaticResource CloseWindowButton}" Content="&#x00D7;"
                   AutomationProperties.Name="Cerrar" ToolTip="Cerrar"
                   Click="CloseButton_Click" />
         </StackPanel>

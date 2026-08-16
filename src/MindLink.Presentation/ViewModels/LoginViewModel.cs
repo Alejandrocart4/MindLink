@@ -7,8 +7,8 @@ public sealed class LoginViewModel : ObservableObject
 {
     private readonly IAuthenticationService authentication;
     private readonly NavigationService navigation;
-    private string email = "jonny@mindlink.local";
-    private string password = "MindLink2026!";
+    private string email = string.Empty;
+    private string password = string.Empty;
     private string errorMessage = string.Empty;
     private bool isBusy;
 
@@ -40,10 +40,25 @@ public sealed class LoginViewModel : ObservableObject
 
             AppSession.UserId = user.Id;
             AppSession.UserName = user.FullName;
+            AppSession.Plan = user.Plan;
             navigation.NavigateToDashboard();
         }
         catch { ErrorMessage = "Ocurrió un problema al abrir tu espacio local. Inténtalo nuevamente."; }
         finally { IsBusy = false; }
+    }
+
+    public void UseFreeAccount()
+    {
+        Email = "free@mindlink.local";
+        Password = "MindLinkFree2026!";
+        ErrorMessage = string.Empty;
+    }
+
+    public void UseProAccount()
+    {
+        Email = "pro@mindlink.local";
+        Password = "MindLinkPro2026!";
+        ErrorMessage = string.Empty;
     }
 }
 
@@ -51,4 +66,5 @@ public static class AppSession
 {
     public static int UserId { get; set; }
     public static string UserName { get; set; } = string.Empty;
+    public static string Plan { get; set; } = string.Empty;
 }

@@ -1,0 +1,11 @@
+<UserControl x:Class="MindLink.Presentation.Controls.MindLinkBrand"
+             x:Name="Root"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Viewbox Width="{Binding Size, ElementName=Root}" Height="{Binding Size, ElementName=Root}" Stretch="Fill">
+    <Grid Width="100" Height="100" ClipToBounds="True">
+      <Image Source="/Assets/mindlink-brand-symbol.png" Width="320" Height="213" Stretch="Fill"
+             HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-108,-56,0,0" />
+    </Grid>
+  </Viewbox>
+</UserControl>

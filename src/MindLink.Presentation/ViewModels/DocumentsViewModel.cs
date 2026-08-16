@@ -118,7 +118,7 @@ public sealed class DocumentsViewModel : ObservableObject
     }
 
     public string WordCountLabel => $"{SelectedSection.CalculatedWordCount:N0} palabras";
-    public bool ShowResearchCallouts => SelectedSection.Id == document.SelectedSectionId;
+    public bool ShowResearchCallouts => false;
 
     public string SaveStatus
     {

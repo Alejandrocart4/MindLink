@@ -212,26 +212,29 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemContainerStyle>
               <Style TargetType="ContentPresenter">
-                <Setter Property="Canvas.Left" Value="{Binding HaloLeft}" />
-                <Setter Property="Canvas.Top" Value="{Binding HaloTop}" />
+                <Setter Property="Canvas.Left" Value="{Binding CardLeft}" />
+                <Setter Property="Canvas.Top" Value="{Binding CardTop}" />
                 <Setter Property="Opacity" Value="{Binding Opacity}" />
               </Style>
             </ItemsControl.ItemContainerStyle>
             <ItemsControl.ItemTemplate>
               <DataTemplate>
                 <Button Style="{StaticResource GraphNodeButton}"
-                        Width="{Binding HaloDiameter}" Height="{Binding HaloDiameter}"
+                        Width="136" Height="136"
                         Command="{Binding DataContext.SelectNodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         CommandParameter="{Binding}" ToolTip="{Binding Label}">
                   <Grid>
-                    <Ellipse x:Name="SelectionHalo" Margin="0" Fill="#16009BA9"
+                    <Ellipse x:Name="SelectionHalo" Width="{Binding HaloDiameter}" Height="{Binding HaloDiameter}"
+                             HorizontalAlignment="Center" VerticalAlignment="Center" Fill="#16009BA9"
                              Stroke="#5B009BA9" StrokeThickness="1.4" StrokeDashArray="3,2"
                              Visibility="Collapsed" />
-                    <Ellipse Margin="8" Fill="White" Opacity="0.9" />
-                    <Ellipse Margin="12" Fill="{Binding AccentColor}" Stroke="#3301153E" StrokeThickness="1.5" />
-                    <TextBlock Text="{Binding ShortLabel}" Width="124" TextAlignment="Center"
+                    <Ellipse Width="{Binding OuterDiameter}" Height="{Binding OuterDiameter}"
+                             HorizontalAlignment="Center" VerticalAlignment="Center" Fill="White" Opacity="0.94" />
+                    <Ellipse Width="{Binding Diameter}" Height="{Binding Diameter}"
+                             HorizontalAlignment="Center" VerticalAlignment="Center" Fill="{Binding AccentColor}" Stroke="#3301153E" StrokeThickness="1.5" />
+                    <TextBlock Text="{Binding ShortLabel}" Width="{Binding LabelWidth}" TextAlignment="Center"
                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                               TextWrapping="NoWrap" FontSize="10.5" FontWeight="Bold" Foreground="White" />
+                               TextWrapping="Wrap" FontSize="{Binding LabelFontSize}" FontWeight="Bold" Foreground="White" />
                   </Grid>
                 </Button>
                 <DataTemplate.Triggers>

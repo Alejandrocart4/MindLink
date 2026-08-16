@@ -56,8 +56,11 @@
     <Border Background="#011A46" BorderBrush="#0D3261" BorderThickness="0,0,1,0">
       <DockPanel LastChildFill="True">
         <Grid DockPanel.Dock="Top" Height="68">
-          <controls:MindLinkLogo LogoSize="31" TextFontSize="16" ShowText="{Binding IsSidebarExpanded}"
-                                 HorizontalAlignment="Left" Margin="16,0,0,0" />
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="16,0,0,0">
+            <controls:MindLinkBrand Size="31" />
+            <TextBlock Text="MindLink" Margin="9,0,0,0" Foreground="White" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"
+                       Visibility="{Binding IsSidebarExpanded, Converter={StaticResource BooleanToVisibility}}" />
+          </StackPanel>
           <Button Command="{Binding ToggleSidebarCommand}"
                   HorizontalAlignment="Right" Width="34" Height="34" Margin="0,0,8,0"
                   Foreground="#6B8FA3" Content="‹" FontSize="18">
@@ -84,6 +87,8 @@
                         Visibility="{Binding IsSidebarExpanded, Converter={StaticResource BooleanToVisibility}}">
               <TextBlock Text="{Binding UserName}" Foreground="White" FontSize="11.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
               <TextBlock Text="{Binding UserRole}" Foreground="#6B8FA3" FontSize="10.5" />
+              <Button Command="{Binding SignOutCommand}" Content="Cerrar sesi&#xF3;n" Background="Transparent" BorderThickness="0"
+                      Foreground="{StaticResource BrandTeal}" FontSize="10.5" Padding="0" HorizontalAlignment="Left" />
             </StackPanel>
           </Grid>
         </Border>
@@ -149,9 +154,12 @@
             <Button Style="{StaticResource IconButton}" Command="{Binding ToggleNotificationsCommand}" Margin="10,0,0,0" Padding="8" MinWidth="34" MinHeight="34">
               <Grid><TextBlock Text="&#xE7ED;" FontFamily="Segoe MDL2 Assets" Foreground="{StaticResource TextMuted}" FontSize="13" /><Border Background="{StaticResource Danger}" CornerRadius="7" Width="14" Height="14" Margin="12,-12,-8,0"><TextBlock Text="3" Foreground="White" FontSize="8" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border></Grid>
             </Button>
-            <Border Width="34" Height="34" CornerRadius="17" Background="{StaticResource BrandPetroleum}" Margin="9,0,0,0">
-              <TextBlock Text="{Binding UserInitials}" Foreground="White" FontWeight="Bold" FontSize="11.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
-            </Border>
+            <Button Command="{Binding ToggleAccountMenuCommand}" Width="34" Height="34" Padding="0" Margin="9,0,0,0"
+                    Background="{StaticResource BrandPetroleum}" BorderThickness="0" ToolTip="Cuenta">
+              <Border CornerRadius="17" Background="{StaticResource BrandPetroleum}">
+                <TextBlock Text="{Binding UserInitials}" Foreground="White" FontWeight="Bold" FontSize="11.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Border>
+            </Button>
           </StackPanel>
         </Grid>
       </Border>
@@ -166,6 +174,28 @@
           <Border Margin="0,14,0,0" Padding="11" Background="{StaticResource SoftAmber}" CornerRadius="8"><TextBlock Text="2 referencias necesitan completar sus datos bibliográficos." FontSize="11.5" TextWrapping="Wrap" /></Border>
           <Border Margin="0,8,0,0" Padding="11" Background="{StaticResource SoftTeal}" CornerRadius="8"><TextBlock Text="La sección 2.3 tiene una nueva versión guardada." FontSize="11.5" TextWrapping="Wrap" /></Border>
           <Border Margin="0,8,0,0" Padding="11" Background="{StaticResource SoftBlue}" CornerRadius="8"><TextBlock Text="Tu red sumó 28 relaciones esta semana." FontSize="11.5" TextWrapping="Wrap" /></Border>
+        </StackPanel>
+      </Border>
+
+      <Border Grid.RowSpan="2" Panel.ZIndex="21" Width="270" Padding="18" HorizontalAlignment="Right" VerticalAlignment="Top"
+              Margin="0,52,18,0" Background="White" BorderBrush="{StaticResource Border}" BorderThickness="1" CornerRadius="12"
+              Effect="{StaticResource CardShadow}" Visibility="{Binding IsAccountMenuOpen, Converter={StaticResource BooleanToVisibility}}">
+        <StackPanel>
+          <DockPanel>
+            <TextBlock Text="Cuenta" Style="{StaticResource SectionTitle}" />
+            <Button DockPanel.Dock="Right" Command="{Binding CloseAccountMenuCommand}" Style="{StaticResource TextButton}" Content="&#x00D7;" Padding="5" />
+          </DockPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,16,0,14">
+            <Border Width="40" Height="40" CornerRadius="20" Background="{StaticResource BrandPetroleum}">
+              <TextBlock Text="{Binding UserInitials}" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+              <TextBlock Text="{Binding UserName}" FontWeight="SemiBold" />
+              <TextBlock Text="{Binding UserRole}" FontSize="11.5" Foreground="{StaticResource TextMuted}" />
+            </StackPanel>
+          </StackPanel>
+          <Separator Margin="0,0,0,10" />
+          <Button Command="{Binding SignOutCommand}" Style="{StaticResource SecondaryButton}" Content="Cerrar sesi&#xF3;n" HorizontalAlignment="Stretch" />
         </StackPanel>
       </Border>
     </Grid>
