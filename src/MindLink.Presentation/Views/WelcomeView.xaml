@@ -36,7 +36,7 @@
         </TextBlock>
 
         <TextBlock Margin="0,22,0,0" Width="470" HorizontalAlignment="Left"
-                   Text="Organiza notas, referencias y proyectos de investigación en un solo espacio. Un ecosistema local que transforma investigaciones fragmentadas en conocimiento estructurado y narrativas publicables."
+                   Text="Organiza notas, referencias y proyectos de investigación en un solo espacio: un ecosistema local que transforma investigaciones fragmentadas en conocimiento estructurado y narrativas publicables."
                    Foreground="{StaticResource TextSecondary}" FontSize="16" LineHeight="26"
                    TextWrapping="Wrap" />
 
@@ -56,7 +56,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock Text="🔒" FontSize="14" Foreground="{StaticResource BrandTeal}" Margin="0,1,0,0" />
             <StackPanel Grid.Column="1">
-              <TextBlock Text="Aplicación 100% local" Foreground="{StaticResource BrandPetroleum}"
+              <TextBlock Text="Aplicación 100 % local" Foreground="{StaticResource BrandPetroleum}"
                          FontWeight="SemiBold" FontSize="13" />
               <TextBlock Text="Todos tus datos se almacenan en tu dispositivo. Tu investigación es privada y segura sin necesidad de conexión a internet."
                          Foreground="#5A8096" FontSize="12.5" LineHeight="19" TextWrapping="Wrap" Margin="0,4,0,0" />
@@ -88,7 +88,7 @@
             <Ellipse Canvas.Left="152" Canvas.Top="62" Width="76" Height="76" Fill="#26009BA9" Stroke="#99009BA9" StrokeThickness="1.5" />
             <Ellipse Canvas.Left="164" Canvas.Top="74" Width="52" Height="52" Fill="#40009BA9" Stroke="{StaticResource BrandTeal}" StrokeThickness="2" />
             <TextBlock Canvas.Left="165" Canvas.Top="88" Width="50" Text="Proyecto" TextAlignment="Center" Foreground="White" FontSize="9" FontWeight="SemiBold" />
-            <TextBlock Canvas.Left="157" Canvas.Top="103" Width="66" Text="IA &amp; Educación" TextAlignment="Center" Foreground="#BFFFFFFF" FontSize="7.5" />
+            <TextBlock Canvas.Left="157" Canvas.Top="103" Width="66" Text="IA y educación" TextAlignment="Center" Foreground="#BFFFFFFF" FontSize="7.5" />
 
             <Ellipse Canvas.Left="62" Canvas.Top="152" Width="56" Height="56" Fill="#33006293" Stroke="#B3007F9D" StrokeThickness="1.5" />
             <Ellipse Canvas.Left="72" Canvas.Top="162" Width="36" Height="36" Fill="#4D006293" Stroke="{StaticResource BrandTealDark}" StrokeThickness="1.5" />
@@ -98,18 +98,18 @@
             <Ellipse Canvas.Left="262" Canvas.Top="142" Width="56" Height="56" Fill="#33003280" Stroke="#B3006293" StrokeThickness="1.5" />
             <Ellipse Canvas.Left="272" Canvas.Top="152" Width="36" Height="36" Fill="#4D003280" Stroke="{StaticResource BrandPetroleum}" StrokeThickness="1.5" />
             <TextBlock Canvas.Left="273" Canvas.Top="161" Width="34" Text="Ref." TextAlignment="Center" Foreground="White" FontSize="8" FontWeight="SemiBold" />
-            <TextBlock Canvas.Left="265" Canvas.Top="173" Width="50" Text="UNESCO 2023" TextAlignment="Center" Foreground="#99FFFFFF" FontSize="6.5" />
+            <TextBlock Canvas.Left="265" Canvas.Top="173" Width="50" Text="UNESCO, 2023" TextAlignment="Center" Foreground="#99FFFFFF" FontSize="6.5" />
 
             <Ellipse Canvas.Left="166" Canvas.Top="196" Width="48" Height="48" Fill="#1F009BA9" Stroke="#80009BA9" StrokeThickness="1.5" />
             <Ellipse Canvas.Left="174" Canvas.Top="204" Width="32" Height="32" Fill="#33009BA9" Stroke="#CC009BA9" StrokeThickness="1.5" />
             <TextBlock Canvas.Left="167" Canvas.Top="211" Width="46" Text="Concepto" TextAlignment="Center" Foreground="White" FontSize="7.5" FontWeight="SemiBold" />
-            <TextBlock Canvas.Left="166" Canvas.Top="223" Width="48" Text="IA Adaptativa" TextAlignment="Center" Foreground="#99FFFFFF" FontSize="6" />
+            <TextBlock Canvas.Left="166" Canvas.Top="223" Width="48" Text="IA adaptativa" TextAlignment="Center" Foreground="#99FFFFFF" FontSize="6" />
 
             <Border Canvas.Left="34" Canvas.Top="244" Width="32" Height="32" CornerRadius="16" Background="#22009BA9" BorderBrush="#88009BA9" BorderThickness="1">
               <TextBlock Text="Cita" Foreground="#CCFFFFFF" FontSize="6.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Border>
             <Border Canvas.Left="314" Canvas.Top="234" Width="32" Height="32" CornerRadius="16" Background="#22006293" BorderBrush="#88006293" BorderThickness="1">
-              <TextBlock Text="Doc" Foreground="#CCFFFFFF" FontSize="6.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              <TextBlock Text="Doc." Foreground="#CCFFFFFF" FontSize="6.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Border>
             <Border Canvas.Left="114" Canvas.Top="274" Width="32" Height="32" CornerRadius="16" Background="#22007F9D" BorderBrush="#88007F9D" BorderThickness="1">
               <TextBlock Text="Idea" Foreground="#CCFFFFFF" FontSize="6.5" HorizontalAlignment="Center" VerticalAlignment="Center" />

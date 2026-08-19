@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using MindLink.Application.Models;
+using MindLink.Presentation.Services;
 
 namespace MindLink.Presentation.ViewModels;
 
@@ -9,9 +10,11 @@ public sealed class HistoryViewModel : ObservableObject
     private bool isRestoreConfirmationVisible;
     private string restorationMessage = string.Empty;
     private bool isRestorationMessageVisible;
+    private readonly WorkspaceSession session;
 
-    public HistoryViewModel(WorkspaceSnapshot workspace)
+    public HistoryViewModel(WorkspaceSnapshot workspace, WorkspaceSession session)
     {
+        this.session = session;
         Versions = new ObservableCollection<HistoryVersionItemViewModel>(
             workspace.Versions.Select(version => new HistoryVersionItemViewModel(version)));
         selectedVersion = Versions.FirstOrDefault(version => version.IsCurrent) ?? Versions.First();
@@ -25,7 +28,7 @@ public sealed class HistoryViewModel : ObservableObject
     }
 
     public ObservableCollection<HistoryVersionItemViewModel> Versions { get; }
-    public string VersionSummary => $"Marco Teórico · {Versions.Count} versiones";
+    public string VersionSummary => $"Marco teórico · {Versions.Count} versiones";
 
     public HistoryVersionItemViewModel SelectedVersion
     {
@@ -113,6 +116,15 @@ public sealed class HistoryViewModel : ObservableObject
     private void ConfirmRestore()
     {
         foreach (var version in Versions) version.IsCurrent = version == SelectedVersion;
+        session.Update(workspace =>
+        {
+            var restoredText = SelectedVersion.Changes.FirstOrDefault()?.CurrentText;
+            var document = workspace.ActiveDocument;
+            var sections = string.IsNullOrWhiteSpace(restoredText) ? document.Sections : document.Sections.Select(section =>
+                section.Id == document.SelectedSectionId ? section with { Content = restoredText, WordCount = restoredText.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Length } : section).ToArray();
+            var versions = workspace.Versions.Select(version => version with { IsCurrent = version.Id == SelectedVersion.Id }).ToArray();
+            return workspace with { ActiveDocument = document with { Sections = sections, LastSavedLabel = "Versión restaurada ahora" }, Versions = versions };
+        });
         IsRestoreConfirmationVisible = false;
         RestorationMessage = $"{SelectedVersion.Label} fue restaurada y ahora es la versión actual.";
         IsRestorationMessageVisible = true;
@@ -149,6 +161,8 @@ public sealed class HistoryVersionItemViewModel : ObservableObject
     public string DisplayLabel => IsCurrent ? $"{Label} — actual" : Label;
     public string AddedLabel => $"+{AddedWords:N0}";
     public string RemovedLabel => RemovedWords == 0 ? string.Empty : $"-{RemovedWords:N0}";
+    public string AddedUnitLabel => AddedWords == 1 ? "palabra agregada" : "palabras agregadas";
+    public string RemovedUnitLabel => RemovedWords == 1 ? "palabra eliminada" : "palabras eliminadas";
 
     public bool IsSelected
     {

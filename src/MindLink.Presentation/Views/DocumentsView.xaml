@@ -180,9 +180,16 @@
             <ColumnDefinition Width="Auto" />
           </Grid.ColumnDefinitions>
           <StackPanel Orientation="Horizontal">
-            <Button Style="{StaticResource DocumentToolButton}" Content="B" FontWeight="Bold" Command="{Binding ToggleBoldCommand}" ToolTip="Alternar negrita" />
-            <Button Style="{StaticResource DocumentToolButton}" Content="I" FontStyle="Italic" Command="{Binding ToggleItalicCommand}" ToolTip="Alternar cursiva" />
-            <Button Style="{StaticResource DocumentToolButton}" Content="H" Command="{Binding IncreaseFontSizeCommand}" ToolTip="Aumentar tamaño de texto" />
+            <Button Style="{StaticResource DocumentToolButton}" Content="↶" Focusable="False" Click="UndoButton_Click" ToolTip="Deshacer (Ctrl+Z)" />
+            <Button Style="{StaticResource DocumentToolButton}" Content="↷" Focusable="False" Click="RedoButton_Click" ToolTip="Rehacer (Ctrl+Y)" />
+            <Button Style="{StaticResource DocumentToolButton}" Content="B" FontWeight="Bold" Focusable="False" Click="BoldButton_Click" ToolTip="Negrita en la selección (Ctrl+B)" />
+            <Button Style="{StaticResource DocumentToolButton}" Content="I" FontStyle="Italic" Focusable="False" Click="ItalicButton_Click" ToolTip="Cursiva en la selección (Ctrl+I)" />
+            <Button Style="{StaticResource DocumentToolButton}" Focusable="False" Click="UnderlineButton_Click" ToolTip="Subrayar la selección (Ctrl+U)"><TextBlock Text="U" TextDecorations="Underline" /></Button>
+            <Button Style="{StaticResource DocumentToolButton}" Content="≡←" Focusable="False" Click="AlignLeftButton_Click" ToolTip="Alinear a la izquierda" />
+            <Button Style="{StaticResource DocumentToolButton}" Content="≡" Focusable="False" Click="CenterButton_Click" ToolTip="Centrar párrafo seleccionado" />
+            <Button Style="{StaticResource DocumentToolButton}" Content="→≡" Focusable="False" Click="AlignRightButton_Click" ToolTip="Alinear a la derecha" />
+            <Button Style="{StaticResource DocumentToolButton}" Content="H−" Focusable="False" Click="DecreaseFontButton_Click" ToolTip="Reducir tamaño de la selección" />
+            <Button Style="{StaticResource DocumentToolButton}" Content="H+" Focusable="False" Click="IncreaseFontButton_Click" ToolTip="Aumentar tamaño de la selección" />
             <Button Style="{StaticResource DocumentToolButton}" Content="❞" Command="{Binding InsertCitationCommand}" ToolTip="Insertar primera cita relacionada" />
           </StackPanel>
           <Border Grid.Column="1" Width="1" Height="20" Margin="8,0" Background="{StaticResource Border}" />
@@ -206,13 +213,13 @@
           <StackPanel>
             <TextBlock Text="{Binding SectionContext}" FontFamily="Consolas" FontSize="10.5" FontWeight="SemiBold"
                        Foreground="{StaticResource TextSubtle}" />
-            <TextBlock Text="{Binding SectionTitle}" Margin="0,8,0,24" FontSize="28" FontWeight="Bold"
-                       Foreground="{StaticResource BrandNavy}" TextWrapping="Wrap" />
+            <TextBox Text="{Binding EditableSectionTitle, UpdateSourceTrigger=PropertyChanged}" Margin="0,8,0,24" FontSize="28" FontWeight="Bold"
+                     Foreground="{StaticResource BrandNavy}" Background="Transparent" BorderThickness="0" Padding="0" />
 
-            <TextBox Style="{StaticResource EditorParagraph}" FontSize="{Binding EditorFontSize}"
-                     Text="{Binding ParagraphOne, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBox Style="{StaticResource EditorParagraph}" FontSize="{Binding EditorFontSize}"
-                     Text="{Binding ParagraphTwo, UpdateSourceTrigger=PropertyChanged}" />
+            <RichTextBox x:Name="DocumentEditor" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource TextPrimary}"
+                         FontFamily="Segoe UI Variable Text" FontSize="15" Padding="0" MinHeight="300" AcceptsReturn="True" AcceptsTab="True"
+                         UndoLimit="100" CaretBrush="{StaticResource BrandBlue}" SelectionBrush="{StaticResource BrandTeal}" SpellCheck.IsEnabled="True"
+                         TextChanged="DocumentEditor_TextChanged" />
 
             <Border Visibility="{Binding ShowResearchCallouts, Converter={StaticResource BooleanToVisibilityConverter}}"
                     Margin="0,2,0,20" Padding="18,13" Background="{StaticResource SoftTeal}"
@@ -225,8 +232,6 @@
               </StackPanel>
             </Border>
 
-            <TextBox Style="{StaticResource EditorParagraph}" FontSize="{Binding EditorFontSize}"
-                     Text="{Binding ParagraphThree, UpdateSourceTrigger=PropertyChanged}" />
 
             <Border Visibility="{Binding ShowResearchCallouts, Converter={StaticResource BooleanToVisibilityConverter}}"
                     Margin="0,0,0,20" Padding="14,10" Background="{StaticResource SoftAmber}"
@@ -241,7 +246,7 @@
                 </Border>
                 <StackPanel Grid.Column="1" Margin="10,0,0,0">
                   <TextBlock Text="Comentario" FontSize="11.5" FontWeight="SemiBold" Foreground="#C27C0E" />
-                  <TextBlock Text="Agregar referencia adicional sobre bias algorítmico. Revisar artículo de Holmes et al. (2021)."
+                  <TextBlock Text="Agregar una referencia adicional sobre sesgo algorítmico. Revisar el artículo de Holmes et al. (2021)."
                              Margin="0,3,0,0" FontSize="12.5" Foreground="#6B5010" TextWrapping="Wrap" />
                 </StackPanel>
               </Grid>

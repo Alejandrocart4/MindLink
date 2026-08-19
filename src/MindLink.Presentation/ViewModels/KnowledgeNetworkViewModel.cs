@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using MindLink.Application.Models;
+using MindLink.Presentation.Services;
 
 namespace MindLink.Presentation.ViewModels;
 
@@ -11,10 +12,12 @@ public sealed class KnowledgeNetworkViewModel : ObservableObject
     private string activeView = "Red";
     private double zoom = 1;
     private string statusMessage = string.Empty;
+    private readonly WorkspaceSession session;
 
-    public KnowledgeNetworkViewModel(WorkspaceSnapshot workspace)
+    public KnowledgeNetworkViewModel(WorkspaceSnapshot workspace, WorkspaceSession session)
     {
         ArgumentNullException.ThrowIfNull(workspace);
+        this.session = session;
 
         Nodes = new ObservableCollection<KnowledgeNodeItemViewModel>(
             workspace.KnowledgeGraph.Nodes.Select(node => new KnowledgeNodeItemViewModel(node)));
@@ -102,6 +105,8 @@ public sealed class KnowledgeNetworkViewModel : ObservableObject
     public string ZoomLabel => $"{Zoom:P0}";
     public int NodeCount => Nodes.Count;
     public int ConnectionCount => Connections.Count;
+    public string NodeCountLabel => $"{NodeCount} {(NodeCount == 1 ? "nodo" : "nodos")}";
+    public string ConnectionCountLabel => $"{ConnectionCount} {(ConnectionCount == 1 ? "conexión" : "conexiones")}";
 
     private KnowledgeEdgeItemViewModel CreateEdge(KnowledgeConnection connection)
     {
@@ -157,10 +162,19 @@ public sealed class KnowledgeNetworkViewModel : ObservableObject
             return;
         }
 
-        Connections.Add(new KnowledgeEdgeItemViewModel(
-            $"manual-{SelectedNode.Id}-{candidate.Id}", SelectedNode, candidate, "relacionado"));
+        var identifier = $"manual-{SelectedNode.Id}-{candidate.Id}";
+        Connections.Add(new KnowledgeEdgeItemViewModel(identifier, SelectedNode, candidate, "se relaciona con"));
+        session.Update(workspace => workspace with
+        {
+            KnowledgeGraph = workspace.KnowledgeGraph with
+            {
+                Connections = [.. workspace.KnowledgeGraph.Connections,
+                    new KnowledgeConnection(identifier, SelectedNode.Id, candidate.Id, "se relaciona con")]
+            }
+        });
         StatusMessage = $"Relación creada con {candidate.Label}.";
         OnPropertyChanged(nameof(ConnectionCount));
+        OnPropertyChanged(nameof(ConnectionCountLabel));
         RefreshSelection();
     }
 

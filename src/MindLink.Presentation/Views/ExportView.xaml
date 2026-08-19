@@ -173,7 +173,7 @@
                              Foreground="{StaticResource BrandNavy}" Margin="0,0,0,10" />
                   <CheckBox Content="Portada" IsChecked="{Binding IncludeCover}" Margin="0,0,0,9"
                             Foreground="{StaticResource TextPrimary}" />
-                  <CheckBox Content="Tabla de contenido" IsChecked="{Binding IncludeTableOfContents}" Margin="0,0,0,9"
+                  <CheckBox Content="Tabla de contenidos" IsChecked="{Binding IncludeTableOfContents}" Margin="0,0,0,9"
                             Foreground="{StaticResource TextPrimary}" />
                   <CheckBox Content="Bibliografía" IsChecked="{Binding IncludeBibliography}" Margin="0,0,0,9"
                             Foreground="{StaticResource TextPrimary}" />
@@ -255,13 +255,13 @@
                     <Border Height="2" Background="{StaticResource PrimaryGradient}" Margin="44,16" />
                     <TextBlock Text="María Rodríguez" TextAlignment="Center" FontSize="11.5"
                                Foreground="{StaticResource TextMuted}" />
-                    <TextBlock Text="Tesis de Maestría en Educación Digital" TextAlignment="Center"
+                    <TextBlock Text="Tesis de maestría en Educación Digital" TextAlignment="Center"
                                Margin="0,4,0,22" FontSize="10.5" Foreground="{StaticResource TextSubtle}" />
                     <TextBlock Text="1. Introducción" FontSize="12" FontWeight="Bold"
                                Foreground="{StaticResource TextPrimary}" />
                     <TextBlock Margin="0,7,0,0" TextWrapping="Wrap" FontSize="9.5" LineHeight="16"
                                Foreground="{StaticResource TextMuted}"
-                               Text="La inteligencia artificial está transformando los procesos de enseñanza y aprendizaje en la educación superior..." />
+                               Text="La inteligencia artificial está transformando los procesos de enseñanza y aprendizaje en la educación superior…" />
                   </StackPanel>
                 </Border>
               </Border>
@@ -406,7 +406,7 @@
               <Border Style="{StaticResource SummaryDivider}" />
               <Grid>
                 <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition /></Grid.ColumnDefinitions>
-                <TextBlock Text="Páginas est." FontSize="11.5" Foreground="{StaticResource TextSubtle}" />
+                <TextBlock Text="Páginas estimadas" FontSize="11.5" Foreground="{StaticResource TextSubtle}" />
                 <TextBlock Grid.Column="1" Text="{Binding EstimatedPagesLabel}" TextAlignment="Right" FontSize="11.5"
                            FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" />
               </Grid>

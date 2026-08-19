@@ -50,6 +50,7 @@ public partial class App : System.Windows.Application
         collection.AddScoped<IAuthenticationService, AuthenticationService>();
         collection.AddScoped<IDashboardService, DashboardService>();
         collection.AddSingleton<IWorkspaceDataService, EmptyWorkspaceDataService>();
+        collection.AddSingleton<WorkspaceSession>();
         collection.AddSingleton<IFileDialogService, FileDialogService>();
         collection.AddSingleton<NavigationService>();
         collection.AddSingleton<WorkspaceShellViewModel>();

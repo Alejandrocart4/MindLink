@@ -17,7 +17,7 @@ public sealed class DashboardService(MindLinkDbContext database) : IDashboardSer
             activity.Select(x => new DashboardActivity(x.Title, x.Detail, x.Category, ToTimeLabel(x.OccurredAt))).ToList(),
             [
                 new DashboardAlert("3 notas por clasificar", "Dales contexto para que puedas encontrarlas al redactar.", "Warning"),
-                new DashboardAlert("Una sección sin respaldo", "Marco teórico aún no tiene una fuente vinculada.", "Attention")
+                new DashboardAlert("Una sección sin respaldo", "La sección «Marco teórico» aún no tiene una fuente vinculada.", "Attention")
             ]);
     }
 

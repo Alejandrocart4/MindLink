@@ -253,17 +253,15 @@
         <Border Background="White" BorderBrush="{StaticResource Border}" BorderThickness="1"
                 CornerRadius="8" Padding="11,7" Margin="0,0,8,0">
           <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{Binding NodeCount}" FontFamily="Consolas" FontWeight="Bold"
+            <TextBlock Text="{Binding NodeCountLabel}" FontFamily="Consolas" FontWeight="Bold"
                        Foreground="{StaticResource BrandTeal}" />
-            <TextBlock Text="  Nodos" FontSize="11" Foreground="{StaticResource TextMuted}" />
           </StackPanel>
         </Border>
         <Border Background="White" BorderBrush="{StaticResource Border}" BorderThickness="1"
                 CornerRadius="8" Padding="11,7">
           <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{Binding ConnectionCount}" FontFamily="Consolas" FontWeight="Bold"
+            <TextBlock Text="{Binding ConnectionCountLabel}" FontFamily="Consolas" FontWeight="Bold"
                        Foreground="{StaticResource BrandTeal}" />
-            <TextBlock Text="  Conexiones" FontSize="11" Foreground="{StaticResource TextMuted}" />
           </StackPanel>
         </Border>
       </StackPanel>

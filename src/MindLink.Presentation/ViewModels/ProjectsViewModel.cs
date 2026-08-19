@@ -1,20 +1,23 @@
 using System.Collections.ObjectModel;
 using MindLink.Application.Models;
+using MindLink.Presentation.Services;
 
 namespace MindLink.Presentation.ViewModels;
 
 public sealed class ProjectsViewModel : ObservableObject
 {
     private readonly ObservableCollection<WorkspaceProject> projects;
+    private readonly WorkspaceSession session;
     private string searchText = string.Empty;
     private string currentFilter = "Todos";
     private bool isCardView = true;
     private WorkspaceProject? selectedProject;
     private string statusMessage = string.Empty;
 
-    public ProjectsViewModel(WorkspaceSnapshot workspace)
+    public ProjectsViewModel(WorkspaceSnapshot workspace, WorkspaceSession session)
     {
         projects = new ObservableCollection<WorkspaceProject>(workspace.Projects);
+        this.session = session;
         VisibleProjects = [];
         Filters =
         [
@@ -145,6 +148,7 @@ public sealed class ProjectsViewModel : ObservableObject
         SearchText = string.Empty;
         SetFilter("Todos");
         SelectedProject = project;
+        session.Update(workspace => workspace with { Projects = projects.ToArray(), ActiveProjectId = project.Id });
         StatusMessage = "Nuevo proyecto creado en este espacio local.";
         OnPropertyChanged(nameof(TotalProjects));
         OnPropertyChanged(nameof(ActiveProjects));

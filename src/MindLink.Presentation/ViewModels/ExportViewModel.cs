@@ -7,12 +7,14 @@ using System.Text;
 using System.Windows.Input;
 using Microsoft.Win32;
 using MindLink.Application.Models;
+using MindLink.Presentation.Services;
 
 namespace MindLink.Presentation.ViewModels;
 
 public sealed class ExportViewModel : ObservableObject
 {
     private readonly WorkspaceSnapshot workspace;
+    private readonly WorkspaceSession session;
     private int currentStep = 1;
     private ExportOptionItemViewModel? selectedFormat;
     private string citationStyle = "APA";
@@ -24,9 +26,10 @@ public sealed class ExportViewModel : ObservableObject
     private string? lastExportPath;
     private string statusMessage = string.Empty;
 
-    public ExportViewModel(WorkspaceSnapshot workspace)
+    public ExportViewModel(WorkspaceSnapshot workspace, WorkspaceSession session)
     {
         this.workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
+        this.session = session;
 
         Formats = new ObservableCollection<ExportOptionItemViewModel>(
             workspace.ExportOptions.Select(option => new ExportOptionItemViewModel(option)));
@@ -163,7 +166,7 @@ public sealed class ExportViewModel : ObservableObject
     public string ProjectTitle => workspace.ExportSummary.ProjectTitle;
     public string FormatLabel => SelectedFormat?.Title ?? workspace.ExportSummary.Format;
     public string PreviewFormatLabel => $"Vista previa — {FormatLabel}";
-    public string CitationSummary => $"{CitationStyle} 7ª ed.";
+    public string CitationSummary => $"{CitationStyle}, 7.ª ed.";
     public string IncludedSectionsLabel => $"{Sections.Count(section => section.IsSelected)} de {Sections.Count}";
     public string PreviewSectionsLabel => $"{Sections.Count(section => section.IsSelected)} secciones · ~{workspace.ExportSummary.EstimatedPages} páginas";
     public string ReferencesLabel => $"{workspace.ExportSummary.IncludedReferences} incluidas";
@@ -185,6 +188,7 @@ public sealed class ExportViewModel : ObservableObject
     public bool IsApa => CitationStyle == "APA";
     public bool IsMla => CitationStyle == "MLA";
     public bool IsChicago => CitationStyle == "Chicago";
+    private WorkspaceSnapshot CurrentWorkspace => session.Snapshot ?? workspace;
 
     private static IEnumerable<ExportSectionItemViewModel> CreateSections(WorkspaceSnapshot workspace)
     {
@@ -199,7 +203,7 @@ public sealed class ExportViewModel : ObservableObject
         while (topLevelSections.Count < 3)
         {
             var number = topLevelSections.Count + 1;
-            var title = number switch { 1 => "Introducción", 2 => "Marco Teórico", _ => "Metodología" };
+            var title = number switch { 1 => "Introducción", 2 => "Marco teórico", _ => "Metodología" };
             topLevelSections.Add(new ExportSectionItemViewModel($"chapter-{number}", $"Capítulo {number}: {title}", true, false));
         }
 
@@ -291,11 +295,11 @@ public sealed class ExportViewModel : ObservableObject
         var builder = new StringBuilder();
         builder.AppendLine("IMPACTO DE LA INTELIGENCIA ARTIFICIAL EN EL APRENDIZAJE UNIVERSITARIO");
         builder.AppendLine();
-        builder.AppendLine(workspace.User.FullName);
-        builder.AppendLine("Tesis de Maestría en Educación Digital");
+        builder.AppendLine(CurrentWorkspace.User.FullName);
+        builder.AppendLine("Tesis de maestría en Educación Digital");
         builder.AppendLine();
 
-        foreach (var section in workspace.ActiveDocument.Sections.OrderBy(section => section.Order))
+        foreach (var section in CurrentWorkspace.ActiveDocument.Sections.OrderBy(section => section.Order))
         {
             builder.AppendLine($"{section.Number}. {section.Title}");
             builder.AppendLine(section.Content);
@@ -305,7 +309,7 @@ public sealed class ExportViewModel : ObservableObject
         if (IncludeBibliography)
         {
             builder.AppendLine("BIBLIOGRAFÍA");
-            foreach (var reference in workspace.References)
+            foreach (var reference in CurrentWorkspace.References)
             {
                 builder.AppendLine($"{reference.Authors} ({reference.Year}). {reference.Title}. {reference.Source}.");
             }
@@ -319,11 +323,11 @@ public sealed class ExportViewModel : ObservableObject
         var builder = new StringBuilder();
         builder.AppendLine("# Impacto de la inteligencia artificial en el aprendizaje universitario");
         builder.AppendLine();
-        builder.AppendLine($"**Autora:** {workspace.User.FullName}  ");
+        builder.AppendLine($"**Autoría:** {CurrentWorkspace.User.FullName}  ");
         builder.AppendLine("**Programa:** Maestría en Educación Digital");
         builder.AppendLine();
 
-        foreach (var section in workspace.ActiveDocument.Sections.OrderBy(section => section.Order))
+        foreach (var section in CurrentWorkspace.ActiveDocument.Sections.OrderBy(section => section.Order))
         {
             builder.AppendLine($"## {section.Number}. {section.Title}");
             builder.AppendLine();
@@ -335,7 +339,7 @@ public sealed class ExportViewModel : ObservableObject
         {
             builder.AppendLine("## Bibliografía");
             builder.AppendLine();
-            foreach (var reference in workspace.References)
+            foreach (var reference in CurrentWorkspace.References)
             {
                 builder.AppendLine($"- {reference.Authors} ({reference.Year}). *{reference.Title}*. {reference.Source}.");
             }
@@ -375,9 +379,19 @@ public sealed class ExportViewModel : ObservableObject
                 System.Globalization.CharUnicodeInfo.GetUnicodeCategory(character) != System.Globalization.UnicodeCategory.NonSpacingMark).ToArray());
         }
 
-        var title = ToAscii("Impacto de la inteligencia artificial en el aprendizaje universitario");
-        var author = ToAscii(workspace.User.FullName);
-        var content = $"BT /F1 18 Tf 72 720 Td ({EscapePdf(title)}) Tj 0 -30 Td /F1 12 Tf ({EscapePdf(author)}) Tj 0 -40 Td ({EscapePdf(ToAscii("Documento exportado desde MindLink"))}) Tj ET";
+        var lines = BuildPlainText()
+            .Split(Environment.NewLine)
+            .SelectMany(line => SplitPdfLine(ToAscii(line), 82))
+            .Take(48)
+            .ToArray();
+        var contentBuilder = new StringBuilder("BT /F1 16 Tf 72 744 Td ");
+        for (var index = 0; index < lines.Length; index++)
+        {
+            if (index == 1) contentBuilder.Append("/F1 11 Tf ");
+            contentBuilder.Append($"({EscapePdf(lines[index])}) Tj 0 -15 Td ");
+        }
+        contentBuilder.Append("ET");
+        var content = contentBuilder.ToString();
         var objects = new[]
         {
             "<< /Type /Catalog /Pages 2 0 R >>",
@@ -403,6 +417,21 @@ public sealed class ExportViewModel : ObservableObject
         writer.Write($"xref\n0 {objects.Length + 1}\n0000000000 65535 f \n");
         foreach (var offset in offsets.Skip(1)) writer.Write($"{offset:0000000000} 00000 n \n");
         writer.Write($"trailer\n<< /Size {objects.Length + 1} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF");
+    }
+
+    private static IEnumerable<string> SplitPdfLine(string line, int maximumLength)
+    {
+        if (string.IsNullOrEmpty(line)) return [string.Empty];
+        var parts = new List<string>();
+        while (line.Length > maximumLength)
+        {
+            var split = line.LastIndexOf(' ', maximumLength);
+            if (split <= 0) split = maximumLength;
+            parts.Add(line[..split]);
+            line = line[split..].TrimStart();
+        }
+        parts.Add(line);
+        return parts;
     }
 
     private static string BuildFilter(string extension) => extension.ToLowerInvariant() switch

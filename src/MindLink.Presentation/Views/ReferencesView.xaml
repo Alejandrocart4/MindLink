@@ -205,7 +205,7 @@
                    Style="{StaticResource InputBox}" Padding="32,7,10,7" />
           <TextBlock Text="⌕" FontSize="19" Foreground="{StaticResource TextSubtle}" Margin="11,0,0,2"
                      HorizontalAlignment="Left" VerticalAlignment="Center" IsHitTestVisible="False" />
-          <TextBlock Text="Buscar por autor, título, DOI..." FontSize="12.5" Foreground="{StaticResource TextSubtle}"
+          <TextBlock Text="Buscar por autor, título, DOI…" FontSize="12.5" Foreground="{StaticResource TextSubtle}"
                      Margin="32,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
             <TextBlock.Style>
               <Style TargetType="TextBlock">
@@ -272,19 +272,13 @@
         <Border Background="#FFF7F5" BorderBrush="#F3C7C1" BorderThickness="1" CornerRadius="8" Padding="12,7" Margin="0,0,10,0">
           <StackPanel Orientation="Horizontal">
             <TextBlock Text="⚠" FontSize="14" Foreground="{StaticResource Danger}" Margin="0,0,8,0" />
-            <TextBlock FontSize="12" Foreground="#C0392B">
-              <Run Text="{Binding IncompleteReferences, Mode=OneWay}" />
-              <Run Text=" referencias incompletas (faltan campos requeridos)" />
-            </TextBlock>
+            <TextBlock Text="{Binding IncompleteReferencesLabel}" FontSize="12" Foreground="#C0392B" />
           </StackPanel>
         </Border>
         <Border Background="#FFF9ED" BorderBrush="#ECD9AC" BorderThickness="1" CornerRadius="8" Padding="12,7">
           <StackPanel Orientation="Horizontal">
             <TextBlock Text="ⓘ" FontSize="14" Foreground="#A77811" Margin="0,0,8,0" />
-            <TextBlock FontSize="12" Foreground="#916E10">
-              <Run Text="{Binding UnclassifiedReferences, Mode=OneWay}" />
-              <Run Text=" referencias sin clasificar por proyecto" />
-            </TextBlock>
+            <TextBlock Text="{Binding UnclassifiedReferencesLabel}" FontSize="12" Foreground="#916E10" />
           </StackPanel>
         </Border>
       </StackPanel>
@@ -315,7 +309,7 @@
                     <ColumnDefinition Width="58" />
                     <ColumnDefinition Width="70" />
                   </Grid.ColumnDefinitions>
-                  <TextBlock Grid.Column="1" Text="Autor(es)" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}" />
+                  <TextBlock Grid.Column="1" Text="Autores" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}" />
                   <TextBlock Grid.Column="2" Text="Año" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}" />
                   <TextBlock Grid.Column="3" Text="Título" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}" />
                   <TextBlock Grid.Column="4" Text="Tipo" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}" />
@@ -505,7 +499,7 @@
                         Background="{StaticResource SoftTeal}" Command="{Binding InsertCitationCommand}">
                   <StackPanel Orientation="Horizontal">
                     <TextBlock Text="↳" Margin="0,0,5,0" Foreground="{StaticResource BrandTealDark}" />
-                    <TextBlock Text="Insertar en doc" FontSize="12" Foreground="{StaticResource BrandTealDark}" />
+                    <TextBlock Text="Insertar en el documento" FontSize="12" Foreground="{StaticResource BrandTealDark}" />
                   </StackPanel>
                 </Button>
               </StackPanel>
