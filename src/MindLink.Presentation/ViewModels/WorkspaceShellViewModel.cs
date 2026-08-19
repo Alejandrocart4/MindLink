@@ -1,12 +1,14 @@
 using System.Collections.ObjectModel;
 using MindLink.Application.Models;
 using MindLink.Presentation.Navigation;
+using MindLink.Presentation.Services;
 
 namespace MindLink.Presentation.ViewModels;
 
 public sealed class WorkspaceShellViewModel : ObservableObject
 {
     private readonly NavigationService navigation;
+    private readonly WorkspaceSession session;
     private readonly Dictionary<WorkspaceRoute, ObservableObject> pages = [];
     private ObservableObject? currentPage;
     private WorkspaceSnapshot? workspace;
@@ -16,10 +18,12 @@ public sealed class WorkspaceShellViewModel : ObservableObject
     private string searchText = string.Empty;
     private string statusMessage = "Guardado";
 
-    public WorkspaceShellViewModel(NavigationService navigation)
+    public WorkspaceShellViewModel(NavigationService navigation, WorkspaceSession session)
     {
         this.navigation = navigation;
+        this.session = session;
         navigation.WorkspaceRouteRequested += NavigateTo;
+        session.Changed += snapshot => Workspace = snapshot;
 
         NavigationItems =
         [
@@ -121,6 +125,7 @@ public sealed class WorkspaceShellViewModel : ObservableObject
 
     public void Initialize(WorkspaceSnapshot snapshot)
     {
+        session.Initialize(snapshot);
         Workspace = snapshot;
         pages.Clear();
         NavigationItems.Clear();
@@ -128,10 +133,10 @@ public sealed class WorkspaceShellViewModel : ObservableObject
         AddNavigationItem("Proyectos", "\uE8B7", WorkspaceRoute.Projects);
         AddNavigationItem("Notas", "\uE70B", WorkspaceRoute.Notes);
         AddNavigationItem("Referencias", "\uE82D", WorkspaceRoute.References);
-        pages[WorkspaceRoute.Dashboard] = new DashboardViewModel(snapshot, navigation);
-        pages[WorkspaceRoute.Projects] = new ProjectsViewModel(snapshot);
-        pages[WorkspaceRoute.Notes] = new NotesViewModel(snapshot);
-        pages[WorkspaceRoute.References] = new ReferencesViewModel(snapshot);
+        pages[WorkspaceRoute.Dashboard] = new DashboardViewModel(snapshot, navigation, session);
+        pages[WorkspaceRoute.Projects] = new ProjectsViewModel(snapshot, session);
+        pages[WorkspaceRoute.Notes] = new NotesViewModel(snapshot, session);
+        pages[WorkspaceRoute.References] = new ReferencesViewModel(snapshot, session);
         if (snapshot.User.Role == "Plan Pro")
         {
             AddNavigationItem("Red de conocimiento", "\uE968", WorkspaceRoute.KnowledgeNetwork);
@@ -139,13 +144,13 @@ public sealed class WorkspaceShellViewModel : ObservableObject
             AddNavigationItem("Documentos", "\uE8A5", WorkspaceRoute.Documents);
             AddNavigationItem("Historial", "\uE81C", WorkspaceRoute.History);
             AddNavigationItem("Exportaciones", "\uE72D", WorkspaceRoute.Export);
-            pages[WorkspaceRoute.KnowledgeNetwork] = new KnowledgeNetworkViewModel(snapshot);
-            pages[WorkspaceRoute.Citations] = new CitationsViewModel(snapshot);
-            pages[WorkspaceRoute.Documents] = new DocumentsViewModel(snapshot);
-            pages[WorkspaceRoute.History] = new HistoryViewModel(snapshot);
-            pages[WorkspaceRoute.Export] = new ExportViewModel(snapshot);
+            pages[WorkspaceRoute.KnowledgeNetwork] = new KnowledgeNetworkViewModel(snapshot, session);
+            pages[WorkspaceRoute.Citations] = new CitationsViewModel(snapshot, session);
+            pages[WorkspaceRoute.Documents] = new DocumentsViewModel(snapshot, session);
+            pages[WorkspaceRoute.History] = new HistoryViewModel(snapshot, session);
+            pages[WorkspaceRoute.Export] = new ExportViewModel(snapshot, session);
         }
-        AddNavigationItem("Configuracion", "\uE713", WorkspaceRoute.Settings);
+        AddNavigationItem("Configuración", "\uE713", WorkspaceRoute.Settings);
         pages[WorkspaceRoute.Settings] = new SettingsViewModel(snapshot);
     }
 

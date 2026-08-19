@@ -126,7 +126,7 @@
                                 Command="{Binding DataContext.CopyApaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                 CommandParameter="{Binding}" />
                         <Button Style="{StaticResource SecondaryButton}" Padding="11,6" FontSize="11.5"
-                                Foreground="{StaticResource BrandTealDark}" BorderBrush="#78CED5" Content="↓  Insertar en doc"
+                                Foreground="{StaticResource BrandTealDark}" BorderBrush="#78CED5" Content="↓  Insertar en el documento"
                                 Command="{Binding DataContext.InsertIntoDocumentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                 CommandParameter="{Binding}" />
                       </StackPanel>

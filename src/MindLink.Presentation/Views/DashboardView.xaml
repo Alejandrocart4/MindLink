@@ -95,7 +95,7 @@
                           </DockPanel>
                           <ProgressBar Style="{StaticResource MindLinkProgress}" Value="{Binding Progress}" Maximum="100" Margin="0,8,0,0" />
                           <DockPanel Margin="0,7,0,0" LastChildFill="False">
-                            <TextBlock DockPanel.Dock="Left"><Run Text="{Binding NotesCount, Mode=OneWay}" /><Run Text=" notas    " /><Run Text="{Binding ReferencesCount, Mode=OneWay}" /><Run Text=" refs" /></TextBlock>
+                            <TextBlock DockPanel.Dock="Left"><Run Text="{Binding NotesLabel, Mode=OneWay}" /><Run Text="    " /><Run Text="{Binding ReferencesLabel, Mode=OneWay}" /></TextBlock>
                             <TextBlock DockPanel.Dock="Right" Text="{Binding UpdatedLabel}" Foreground="#8FAAB8" FontSize="9.5" />
                           </DockPanel>
                         </StackPanel>

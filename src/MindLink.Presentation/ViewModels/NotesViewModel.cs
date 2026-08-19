@@ -1,20 +1,27 @@
 using System.Collections.ObjectModel;
 using MindLink.Application.Models;
+using MindLink.Presentation.Services;
 
 namespace MindLink.Presentation.ViewModels;
 
 public sealed class NotesViewModel : ObservableObject
 {
     private readonly ObservableCollection<WorkspaceNote> notes;
+    private readonly WorkspaceSession session;
     private string searchText = string.Empty;
     private string currentFilter = "Todas";
     private bool isCardView = true;
     private WorkspaceNote? selectedNote;
     private string statusMessage = string.Empty;
+    private string noteTitle = string.Empty;
+    private string noteContent = string.Empty;
+    private string noteTags = string.Empty;
+    private string noteStatus = "Borrador";
 
-    public NotesViewModel(WorkspaceSnapshot workspace)
+    public NotesViewModel(WorkspaceSnapshot workspace, WorkspaceSession session)
     {
         notes = new ObservableCollection<WorkspaceNote>(workspace.Notes);
+        this.session = session;
         ActiveProjectId = workspace.ActiveProjectId;
         VisibleNotes = [];
         Filters =
@@ -29,6 +36,7 @@ public sealed class NotesViewModel : ObservableObject
         ShowListCommand = new RelayCommand(() => IsCardView = false);
         CreateNoteCommand = new RelayCommand(CreateNote);
         SelectNoteCommand = new RelayCommand<WorkspaceNote>(SelectNote);
+        SaveNoteCommand = new RelayCommand(SaveNote, () => SelectedNote is not null && !string.IsNullOrWhiteSpace(NoteTitle));
 
         ApplyFilters();
     }
@@ -41,6 +49,7 @@ public sealed class NotesViewModel : ObservableObject
     public RelayCommand ShowListCommand { get; }
     public RelayCommand CreateNoteCommand { get; }
     public RelayCommand<WorkspaceNote> SelectNoteCommand { get; }
+    public RelayCommand SaveNoteCommand { get; }
 
     public string SearchText
     {
@@ -69,8 +78,20 @@ public sealed class NotesViewModel : ObservableObject
         get => selectedNote;
         set
         {
-            if (!SetProperty(ref selectedNote, value) || value is null) return;
+            if (!SetProperty(ref selectedNote, value)) return;
+            OnPropertyChanged(nameof(HasSelectedNote));
+            if (value is null)
+            {
+                ClearEditor();
+                SaveNoteCommand.RaiseCanExecuteChanged();
+                return;
+            }
+            NoteTitle = value.Title;
+            NoteContent = value.Excerpt;
+            NoteTags = string.Join(", ", value.Tags);
+            NoteStatus = value.Status;
             StatusMessage = $"Nota seleccionada: {value.Title}";
+            SaveNoteCommand.RaiseCanExecuteChanged();
         }
     }
 
@@ -85,6 +106,21 @@ public sealed class NotesViewModel : ObservableObject
     }
 
     public bool HasStatusMessage => !string.IsNullOrWhiteSpace(StatusMessage);
+    public bool HasSelectedNote => SelectedNote is not null;
+
+    public string NoteTitle
+    {
+        get => noteTitle;
+        set
+        {
+            if (SetProperty(ref noteTitle, value)) SaveNoteCommand.RaiseCanExecuteChanged();
+        }
+    }
+
+    public string NoteContent { get => noteContent; set => SetProperty(ref noteContent, value); }
+    public string NoteTags { get => noteTags; set => SetProperty(ref noteTags, value); }
+    public string NoteStatus { get => noteStatus; set => SetProperty(ref noteStatus, value); }
+    public IReadOnlyList<string> NoteStatuses { get; } = ["Borrador", "En proceso", "Revisada", "Descartada"];
     public int TotalNotes => notes.Count;
     public int ReviewedNotes => notes.Count(note => note.Status == "Revisada");
     public string Summary => $"{TotalNotes} notas · {ReviewedNotes} revisadas";
@@ -124,19 +160,19 @@ public sealed class NotesViewModel : ObservableObject
         var note = new WorkspaceNote(
             Id: $"note-local-{Guid.NewGuid():N}",
             ProjectId: ActiveProjectId,
-            Title: "Preguntas para la siguiente revisión de literatura",
-            Excerpt: "¿Qué evidencia reciente explica cuándo la personalización con IA mejora el aprendizaje y cuándo aumenta la carga cognitiva?",
+            Title: "Nueva nota",
+            Excerpt: string.Empty,
             Status: "Borrador",
             ReferencesCount: 0,
-            ConnectionsCount: 1,
+            ConnectionsCount: 0,
             UpdatedLabel: "Ahora",
-            Tags: ["Preguntas", "Revisión", "IA"]);
+            Tags: []);
 
         notes.Insert(0, note);
         SearchText = string.Empty;
         SetFilter("Todas");
         SelectedNote = note;
-        StatusMessage = "Nueva nota creada y lista para editar.";
+        StatusMessage = "Nueva nota creada. Escribe el título y el contenido, luego pulsa Guardar nota.";
         OnPropertyChanged(nameof(TotalNotes));
         OnPropertyChanged(nameof(ReviewedNotes));
         OnPropertyChanged(nameof(Summary));
@@ -145,6 +181,56 @@ public sealed class NotesViewModel : ObservableObject
     private void SelectNote(WorkspaceNote? note)
     {
         if (note is not null) SelectedNote = note;
+    }
+
+    public void ClearSelectedNote()
+    {
+        SelectedNote = null;
+        StatusMessage = string.Empty;
+    }
+
+    public void ChangeNoteStatus(WorkspaceNote note, string status)
+    {
+        if (string.IsNullOrWhiteSpace(status) || !NoteStatuses.Contains(status) || !notes.Contains(note)) return;
+        var updated = note with { Status = status, UpdatedLabel = "Ahora" };
+        notes[notes.IndexOf(note)] = updated;
+        if (SelectedNote?.Id == note.Id) SelectedNote = updated;
+        session.Update(workspace => workspace with { Notes = notes.ToArray() });
+        ApplyFilters();
+        StatusMessage = $"Estado actualizado a {status}.";
+    }
+
+    private void ClearEditor()
+    {
+        NoteTitle = string.Empty;
+        NoteContent = string.Empty;
+        NoteTags = string.Empty;
+        NoteStatus = "Borrador";
+    }
+
+    private void SaveNote()
+    {
+        if (SelectedNote is null || string.IsNullOrWhiteSpace(NoteTitle)) return;
+        var tags = NoteTags.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+            .Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+        var updated = SelectedNote with
+        {
+            Title = NoteTitle.Trim(),
+            Excerpt = NoteContent.Trim(),
+            Tags = tags,
+            Status = NoteStatus,
+            UpdatedLabel = "Ahora"
+        };
+        var index = notes.IndexOf(SelectedNote);
+        if (index >= 0) notes[index] = updated;
+        SelectedNote = updated;
+        session.Update(workspace => workspace with { Notes = notes.ToArray() });
+        ApplyFilters();
+        StatusMessage = "Nota guardada localmente.";
+        SelectedNote = null;
+        OnPropertyChanged(nameof(TotalNotes));
+        OnPropertyChanged(nameof(ReviewedNotes));
+        OnPropertyChanged(nameof(Summary));
     }
 }
 

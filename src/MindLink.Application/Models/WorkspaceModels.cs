@@ -59,7 +59,11 @@ public sealed record WorkspaceProject(
     int ReferencesCount,
     string UpdatedLabel,
     IReadOnlyList<string> Tags,
-    IReadOnlyList<string> CollaboratorInitials);
+    IReadOnlyList<string> CollaboratorInitials)
+{
+    public string NotesLabel => $"{NotesCount} {(NotesCount == 1 ? "nota" : "notas")}";
+    public string ReferencesLabel => $"{ReferencesCount} {(ReferencesCount == 1 ? "referencia" : "referencias")}";
+}
 
 public sealed record WorkspaceNote(
     string Id,
@@ -70,7 +74,11 @@ public sealed record WorkspaceNote(
     int ReferencesCount,
     int ConnectionsCount,
     string UpdatedLabel,
-    IReadOnlyList<string> Tags);
+    IReadOnlyList<string> Tags)
+{
+    public string ReferencesLabel => $"{ReferencesCount} {(ReferencesCount == 1 ? "referencia" : "referencias")}";
+    public string ConnectionsLabel => $"{ConnectionsCount} {(ConnectionsCount == 1 ? "vínculo" : "vínculos")}";
+}
 
 public sealed record WorkspaceActivity(
     string Id,
@@ -155,7 +163,12 @@ public sealed record DocumentSection(
     string Status,
     int WordCount,
     int EvidenceCount,
-    int Order);
+    int Order,
+    bool IsBold = false,
+    bool IsItalic = false,
+    string Alignment = "Left",
+    int FontSize = 15,
+    string RichTextContent = "");
 
 public sealed record RelatedDocumentReference(
     string ReferenceId,

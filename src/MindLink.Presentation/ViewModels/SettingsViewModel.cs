@@ -39,9 +39,9 @@ public sealed class SettingsViewModel : ObservableObject
         };
         FontSizes = new ObservableCollection<EditorFontSizeItemViewModel>
         {
-            new(13, "Pequeño (13px)"),
-            new(15, "Mediano (15px)"),
-            new(17, "Grande (17px)")
+            new(13, "Pequeño (13 px)"),
+            new(15, "Mediano (15 px)"),
+            new(17, "Grande (17 px)")
         };
         Shortcuts = new ObservableCollection<KeyboardShortcutItemViewModel>
         {
@@ -237,7 +237,7 @@ public sealed class SettingsViewModel : ObservableObject
         foreach (var item in FontSizes) item.IsSelected = ReferenceEquals(item, fontSize);
         EditorFontSize = fontSize.Size;
         if (System.Windows.Application.Current is not null) System.Windows.Application.Current.Resources["EditorFontSize"] = (double)fontSize.Size;
-        StatusMessage = $"Tamaño del editor establecido en {fontSize.Size}px.";
+        StatusMessage = $"Tamaño del editor establecido en {fontSize.Size} px.";
     }
 
     private void OpenStorageFolder()
@@ -251,7 +251,7 @@ public sealed class SettingsViewModel : ObservableObject
     {
         if (!IsPaidPlan)
         {
-            StatusMessage = "La sincronizacion cifrada esta disponible con el plan Pro.";
+            StatusMessage = "La sincronización cifrada está disponible con el plan Pro.";
             return;
         }
         CloudSyncRequested = true;

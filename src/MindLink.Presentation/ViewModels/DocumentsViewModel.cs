@@ -1,11 +1,14 @@
 using System.Collections.ObjectModel;
+using System.Windows;
 using MindLink.Application.Models;
+using MindLink.Presentation.Services;
 
 namespace MindLink.Presentation.ViewModels;
 
 public sealed class DocumentsViewModel : ObservableObject
 {
     private readonly WorkspaceDocument document;
+    private readonly WorkspaceSession session;
     private DocumentSectionItemViewModel selectedSection;
     private string activeContextTab = "Referencias";
     private string saveStatus;
@@ -14,9 +17,11 @@ public sealed class DocumentsViewModel : ObservableObject
     private bool isItalic;
     private int editorFontSize = 15;
 
-    public DocumentsViewModel(WorkspaceSnapshot workspace)
+    public DocumentsViewModel(WorkspaceSnapshot workspace, WorkspaceSession session)
     {
         document = workspace.ActiveDocument;
+        this.session = session;
+        session.Changed += ReloadFromSnapshot;
         ProjectTitle = workspace.Projects
             .FirstOrDefault(project => project.Id == workspace.ActiveProjectId)?.Title
             ?? document.Title;
@@ -29,6 +34,9 @@ public sealed class DocumentsViewModel : ObservableObject
         selectedSection = Sections.FirstOrDefault(section => section.Id == document.SelectedSectionId)
             ?? Sections.First(section => !section.IsChapter);
         selectedSection.IsSelected = true;
+        isBold = selectedSection.IsBold;
+        isItalic = selectedSection.IsItalic;
+        editorFontSize = selectedSection.FontSize;
 
         RelatedReferences = new ObservableCollection<RelatedReferenceItemViewModel>(
             document.RelatedReferences.Select(related =>
@@ -53,9 +61,10 @@ public sealed class DocumentsViewModel : ObservableObject
         SelectSectionCommand = new RelayCommand<DocumentSectionItemViewModel>(SelectSection, section => section is { IsChapter: false });
         SelectContextTabCommand = new RelayCommand<string>(SelectContextTab);
         SaveCommand = new RelayCommand(Save);
-        ToggleBoldCommand = new RelayCommand(() => IsBold = !IsBold);
-        ToggleItalicCommand = new RelayCommand(() => IsItalic = !IsItalic);
-        IncreaseFontSizeCommand = new RelayCommand(() => EditorFontSize = Math.Min(EditorFontSize + 1, 19));
+        ToggleBoldCommand = new RelayCommand(ToggleBold);
+        ToggleItalicCommand = new RelayCommand(ToggleItalic);
+        IncreaseFontSizeCommand = new RelayCommand(IncreaseFontSize);
+        ToggleCenterCommand = new RelayCommand(ToggleCenter);
         InsertCitationCommand = new RelayCommand<RelatedReferenceItemViewModel>(InsertCitation);
     }
 
@@ -73,9 +82,12 @@ public sealed class DocumentsViewModel : ObservableObject
             if (!SetProperty(ref selectedSection, value)) return;
             OnPropertyChanged(nameof(SectionContext));
             OnPropertyChanged(nameof(SectionTitle));
+            OnPropertyChanged(nameof(EditableSectionTitle));
             OnPropertyChanged(nameof(ParagraphOne));
             OnPropertyChanged(nameof(ParagraphTwo));
             OnPropertyChanged(nameof(ParagraphThree));
+            OnPropertyChanged(nameof(EditorPlainText));
+            OnPropertyChanged(nameof(EditorRichText));
             OnPropertyChanged(nameof(WordCountLabel));
             OnPropertyChanged(nameof(ShowResearchCallouts));
         }
@@ -83,6 +95,18 @@ public sealed class DocumentsViewModel : ObservableObject
 
     public string SectionContext => $"CAPÍTULO {SelectedSection.ParentNumber ?? SelectedSection.Number} · SECCIÓN {SelectedSection.Number}";
     public string SectionTitle => $"{SelectedSection.Number} {SelectedSection.Title}";
+    public string EditableSectionTitle
+    {
+        get => SelectedSection.Title;
+        set
+        {
+            var title = value?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(title) || SelectedSection.Title == title) return;
+            SelectedSection.Title = title;
+            MarkDirty();
+            OnPropertyChanged(nameof(SectionTitle));
+        }
+    }
 
     public string ParagraphOne
     {
@@ -117,6 +141,9 @@ public sealed class DocumentsViewModel : ObservableObject
         }
     }
 
+    public string EditorPlainText => SelectedSection.Content;
+    public string EditorRichText => SelectedSection.RichTextContent;
+
     public string WordCountLabel => $"{SelectedSection.CalculatedWordCount:N0} palabras";
     public bool ShowResearchCallouts => false;
 
@@ -135,13 +162,21 @@ public sealed class DocumentsViewModel : ObservableObject
     public bool IsBold
     {
         get => isBold;
-        private set => SetProperty(ref isBold, value);
+        private set
+        {
+            if (!SetProperty(ref isBold, value)) return;
+            OnPropertyChanged(nameof(EditorFontWeight));
+        }
     }
 
     public bool IsItalic
     {
         get => isItalic;
-        private set => SetProperty(ref isItalic, value);
+        private set
+        {
+            if (!SetProperty(ref isItalic, value)) return;
+            OnPropertyChanged(nameof(EditorFontStyle));
+        }
     }
 
     public int EditorFontSize
@@ -149,6 +184,15 @@ public sealed class DocumentsViewModel : ObservableObject
         get => editorFontSize;
         private set => SetProperty(ref editorFontSize, value);
     }
+
+    public FontWeight EditorFontWeight => IsBold ? FontWeights.Bold : FontWeights.Normal;
+    public FontStyle EditorFontStyle => IsItalic ? FontStyles.Italic : FontStyles.Normal;
+    public TextAlignment EditorTextAlignment => SelectedSection.Alignment switch
+    {
+        "Center" => TextAlignment.Center,
+        "Right" => TextAlignment.Right,
+        _ => TextAlignment.Left
+    };
 
     public string ActiveContextTab
     {
@@ -172,6 +216,7 @@ public sealed class DocumentsViewModel : ObservableObject
     public RelayCommand ToggleBoldCommand { get; }
     public RelayCommand ToggleItalicCommand { get; }
     public RelayCommand IncreaseFontSizeCommand { get; }
+    public RelayCommand ToggleCenterCommand { get; }
     public RelayCommand<RelatedReferenceItemViewModel> InsertCitationCommand { get; }
 
     private void SelectSection(DocumentSectionItemViewModel? section)
@@ -180,6 +225,10 @@ public sealed class DocumentsViewModel : ObservableObject
         SelectedSection.IsSelected = false;
         section.IsSelected = true;
         SelectedSection = section;
+        IsBold = section.IsBold;
+        IsItalic = section.IsItalic;
+        EditorFontSize = section.FontSize;
+        OnPropertyChanged(nameof(EditorTextAlignment));
         IsDirty = false;
         SaveStatus = section.Content.Length == 0 ? "Sección lista para redactar" : "Cambios locales cargados";
     }
@@ -191,6 +240,29 @@ public sealed class DocumentsViewModel : ObservableObject
 
     private void Save()
     {
+        var sections = Sections.Select(section => new DocumentSection(
+            section.Id, section.ParentId, section.Number, section.Title, section.Content,
+            section.Status, section.CalculatedWordCount, 0, section.Id == SelectedSection.Id ? 2 : 1,
+            section.IsBold, section.IsItalic, section.Alignment, section.FontSize, section.RichTextContent)).ToArray();
+        var totalWords = sections.Sum(section => section.WordCount);
+        var savedDocument = document with
+        {
+            SelectedSectionId = SelectedSection.Id,
+            Sections = sections,
+            TotalWordCount = totalWords,
+            LastSavedLabel = "Guardado ahora"
+        };
+        session.Update(workspace =>
+        {
+            var previousContent = workspace.ActiveDocument.Sections
+                .FirstOrDefault(section => section.Id == SelectedSection.Id)?.Content ?? string.Empty;
+            var versionNumber = workspace.Versions.Count + 1;
+            var version = new DocumentVersion($"version-local-{Guid.NewGuid():N}", $"Versión {versionNumber}", true,
+                "Ahora", SelectedSection.Title, SelectedSection.CalculatedWordCount, 0, "Edición guardada localmente.",
+                [new VersionChange($"change-local-{Guid.NewGuid():N}", "Edición", previousContent, SelectedSection.Content)]);
+            var versions = workspace.Versions.Select(item => item with { IsCurrent = false }).Prepend(version).ToArray();
+            return workspace with { ActiveDocument = savedDocument, Versions = versions };
+        });
         IsDirty = false;
         SaveStatus = "Guardado localmente";
     }
@@ -202,6 +274,34 @@ public sealed class DocumentsViewModel : ObservableObject
         OnPropertyChanged(nameof(WordCountLabel));
     }
 
+    private void ToggleBold()
+    {
+        SelectedSection.IsBold = !SelectedSection.IsBold;
+        IsBold = SelectedSection.IsBold;
+        MarkDirty();
+    }
+
+    private void ToggleItalic()
+    {
+        SelectedSection.IsItalic = !SelectedSection.IsItalic;
+        IsItalic = SelectedSection.IsItalic;
+        MarkDirty();
+    }
+
+    private void IncreaseFontSize()
+    {
+        SelectedSection.FontSize = Math.Min(SelectedSection.FontSize + 1, 22);
+        EditorFontSize = SelectedSection.FontSize;
+        MarkDirty();
+    }
+
+    private void ToggleCenter()
+    {
+        SelectedSection.Alignment = SelectedSection.Alignment == "Center" ? "Left" : "Center";
+        OnPropertyChanged(nameof(EditorTextAlignment));
+        MarkDirty();
+    }
+
     private void InsertCitation(RelatedReferenceItemViewModel? reference)
     {
         reference ??= RelatedReferences.FirstOrDefault();
@@ -211,12 +311,40 @@ public sealed class DocumentsViewModel : ObservableObject
         ParagraphThree = string.Concat(ParagraphThree.TrimEnd(), suffix);
         SaveStatus = $"Cita de {reference.ShortAuthor} insertada";
     }
+
+    public void SetEditorContent(string richText, string plainText)
+    {
+        if (!SelectedSection.SetRichTextContent(richText, plainText)) return;
+        MarkDirty();
+        OnPropertyChanged(nameof(EditorPlainText));
+        OnPropertyChanged(nameof(EditorRichText));
+        OnPropertyChanged(nameof(WordCountLabel));
+    }
+
+    private void ReloadFromSnapshot(WorkspaceSnapshot workspace)
+    {
+        var saved = workspace.ActiveDocument.Sections.FirstOrDefault(section => section.Id == SelectedSection.Id);
+        if (saved is null) return;
+        SelectedSection.LoadContent(saved.Content);
+        SaveStatus = workspace.ActiveDocument.LastSavedLabel;
+        OnPropertyChanged(nameof(ParagraphOne));
+        OnPropertyChanged(nameof(ParagraphTwo));
+        OnPropertyChanged(nameof(ParagraphThree));
+        OnPropertyChanged(nameof(EditorPlainText));
+        OnPropertyChanged(nameof(EditorRichText));
+        OnPropertyChanged(nameof(WordCountLabel));
+    }
 }
 
 public sealed class DocumentSectionItemViewModel : ObservableObject
 {
     private readonly List<string> paragraphs;
     private bool isSelected;
+    private bool isBold;
+    private bool isItalic;
+    private string alignment;
+    private int fontSize;
+    private string richTextContent;
 
     public DocumentSectionItemViewModel(DocumentSection section)
     {
@@ -227,6 +355,11 @@ public sealed class DocumentSectionItemViewModel : ObservableObject
         Title = section.Title;
         Status = section.Status;
         FallbackWordCount = section.WordCount;
+        isBold = section.IsBold;
+        isItalic = section.IsItalic;
+        alignment = section.Alignment;
+        fontSize = section.FontSize;
+        richTextContent = section.RichTextContent;
         paragraphs = section.Content
             .Split(["\r\n\r\n", "\n\n"], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .ToList();
@@ -237,9 +370,14 @@ public sealed class DocumentSectionItemViewModel : ObservableObject
     public string? ParentId { get; }
     public string Number { get; }
     public string? ParentNumber { get; }
-    public string Title { get; }
+    public string Title { get; set; }
     public string Status { get; }
     public int FallbackWordCount { get; }
+    public bool IsBold { get => isBold; set => SetProperty(ref isBold, value); }
+    public bool IsItalic { get => isItalic; set => SetProperty(ref isItalic, value); }
+    public string Alignment { get => alignment; set => SetProperty(ref alignment, value); }
+    public int FontSize { get => fontSize; set => SetProperty(ref fontSize, value); }
+    public string RichTextContent { get => richTextContent; private set => SetProperty(ref richTextContent, value); }
     public bool IsChapter => ParentId is null;
     public string DisplayLabel => IsChapter ? $"Capítulo {Number}: {Title}" : $"{Number} {Title}";
     public string Content => string.Join(Environment.NewLine + Environment.NewLine, paragraphs.Where(paragraph => !string.IsNullOrWhiteSpace(paragraph)));
@@ -268,6 +406,28 @@ public sealed class DocumentSectionItemViewModel : ObservableObject
         paragraphs[index] = value;
         OnPropertyChanged(nameof(Content));
         OnPropertyChanged(nameof(CalculatedWordCount));
+        return true;
+    }
+
+    public void LoadContent(string value)
+    {
+        var values = (value ?? string.Empty)
+            .Split(["\r\n\r\n", "\n\n"], StringSplitOptions.None)
+            .Take(3)
+            .ToList();
+        while (values.Count < 3) values.Add(string.Empty);
+        for (var index = 0; index < 3; index++) paragraphs[index] = values[index];
+        OnPropertyChanged(nameof(Content));
+        OnPropertyChanged(nameof(CalculatedWordCount));
+    }
+
+    public bool SetRichTextContent(string richText, string plainText)
+    {
+        richText ??= string.Empty;
+        plainText ??= string.Empty;
+        if (RichTextContent == richText && Content == plainText) return false;
+        RichTextContent = richText;
+        LoadContent(plainText);
         return true;
     }
 }

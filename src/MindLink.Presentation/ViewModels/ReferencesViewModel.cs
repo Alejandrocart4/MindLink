@@ -1,13 +1,17 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
+using Microsoft.Win32;
 using MindLink.Application.Models;
+using MindLink.Presentation.Services;
 
 namespace MindLink.Presentation.ViewModels;
 
 public sealed class ReferencesViewModel : ObservableObject
 {
     private readonly ObservableCollection<WorkspaceReference> references;
+    private readonly WorkspaceSession session;
     private string searchText = string.Empty;
     private string currentFilter = "Todas";
     private string selectedFormat = "APA";
@@ -16,9 +20,10 @@ public sealed class ReferencesViewModel : ObservableObject
     private WorkspaceReference? selectedReference;
     private string statusMessage = string.Empty;
 
-    public ReferencesViewModel(WorkspaceSnapshot workspace)
+    public ReferencesViewModel(WorkspaceSnapshot workspace, WorkspaceSession session)
     {
         references = new ObservableCollection<WorkspaceReference>(workspace.References);
+        this.session = session;
         ActiveProjectId = workspace.ActiveProjectId;
         VisibleReferences = [];
         Filters =
@@ -138,6 +143,8 @@ public sealed class ReferencesViewModel : ObservableObject
     public int ReadReferences => references.Count(reference => reference.ReadingStatus == "Leído");
     public int IncompleteReferences => references.Count(reference => !reference.IsComplete);
     public int UnclassifiedReferences => references.Count(reference => !reference.IsClassified);
+    public string IncompleteReferencesLabel => $"{IncompleteReferences} {(IncompleteReferences == 1 ? "referencia incompleta" : "referencias incompletas")} (faltan campos requeridos)";
+    public string UnclassifiedReferencesLabel => $"{UnclassifiedReferences} {(UnclassifiedReferences == 1 ? "referencia sin clasificar" : "referencias sin clasificar")} por proyecto";
     public string Summary => $"{TotalReferences} referencias · {ReadReferences} leídas · {IncompleteReferences} incompletas";
 
     private void SetFilter(string? filter)
@@ -210,23 +217,46 @@ public sealed class ReferencesViewModel : ObservableObject
 
     private void ImportReference()
     {
+        var dialog = new OpenFileDialog
+        {
+            Title = "Importar referencia",
+            Filter = "Referencias RIS (*.ris)|*.ris|Archivos BibTeX (*.bib)|*.bib|Todos los archivos (*.*)|*.*"
+        };
+        if (dialog.ShowDialog() != true) return;
+
+        string[] lines;
+        try { lines = File.ReadAllLines(dialog.FileName); }
+        catch (Exception exception)
+        {
+            StatusMessage = $"No se pudo leer la referencia: {exception.Message}";
+            return;
+        }
+
+        var authors = lines.Where(line => line.StartsWith("AU  - ", StringComparison.OrdinalIgnoreCase))
+            .Select(line => line[6..].Trim()).ToArray();
+        var title = ReadRisValue(lines, "TI  - ") ?? ReadRisValue(lines, "T1  - ") ?? Path.GetFileNameWithoutExtension(dialog.FileName);
+        var yearText = ReadRisValue(lines, "PY  - ") ?? ReadRisValue(lines, "Y1  - ") ?? DateTime.Now.Year.ToString();
+        var year = int.TryParse(yearText[..Math.Min(4, yearText.Length)], out var parsedYear) ? parsedYear : DateTime.Now.Year;
         var reference = new WorkspaceReference(
             Id: $"reference-imported-{Guid.NewGuid():N}",
             ProjectId: ActiveProjectId,
-            Authors: "OECD",
-            Year: 2023,
-            Title: "Digital Education Outlook 2023: Towards an Effective Digital Education Ecosystem",
-            Source: "OECD Publishing",
-            ReferenceType: "Informe institucional",
-            ReadingStatus: "En lectura",
+            Authors: authors.Length == 0 ? "Autor no especificado" : string.Join(" & ", authors),
+            Year: year,
+            Title: title,
+            Source: ReadRisValue(lines, "JO  - ") ?? ReadRisValue(lines, "T2  - ") ?? "Fuente importada",
+            ReferenceType: "Referencia importada",
+            ReadingStatus: "Por leer",
             UsageCount: 0,
             IsComplete: true,
             IsClassified: true,
-            Identifier: "https://doi.org/10.1787/c74f03de-en",
-            Tags: ["Educación digital", "Política pública", "IA"]);
+            Identifier: ReadRisValue(lines, "DO  - ") ?? ReadRisValue(lines, "UR  - ") ?? string.Empty,
+            Tags: ["Importada"]);
 
-        AddReference(reference, "Referencia importada correctamente desde el catálogo local.");
+        AddReference(reference, "Referencia importada y guardada correctamente.");
     }
+
+    private static string? ReadRisValue(IEnumerable<string> lines, string prefix) => lines
+        .FirstOrDefault(line => line.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))?[prefix.Length..].Trim();
 
     private void AddReference(WorkspaceReference reference, string message)
     {
@@ -234,11 +264,14 @@ public sealed class ReferencesViewModel : ObservableObject
         SearchText = string.Empty;
         SetFilter("Todas");
         SelectedReference = reference;
+        session.Update(workspace => workspace with { References = references.ToArray() });
         StatusMessage = message;
         OnPropertyChanged(nameof(TotalReferences));
         OnPropertyChanged(nameof(ReadReferences));
         OnPropertyChanged(nameof(IncompleteReferences));
         OnPropertyChanged(nameof(UnclassifiedReferences));
+        OnPropertyChanged(nameof(IncompleteReferencesLabel));
+        OnPropertyChanged(nameof(UnclassifiedReferencesLabel));
         OnPropertyChanged(nameof(Summary));
     }
 
@@ -285,7 +318,16 @@ public sealed class ReferencesViewModel : ObservableObject
     private void InsertCitation()
     {
         if (SelectedReference is null) return;
-        StatusMessage = $"La cita de {SelectedReference.Authors} quedó lista en el documento activo.";
+        var citation = $" ({SelectedReference.Authors.Split(',')[0].Trim()}, {SelectedReference.Year})";
+        session.Update(workspace =>
+        {
+            var document = workspace.ActiveDocument;
+            var sections = document.Sections.Select(section => section.Id != document.SelectedSectionId
+                ? section
+                : section with { Content = string.Concat(section.Content.TrimEnd(), citation), WordCount = section.WordCount + 2 }).ToArray();
+            return workspace with { ActiveDocument = document with { Sections = sections, LastSavedLabel = "Cita insertada ahora" } };
+        });
+        StatusMessage = $"La cita de {SelectedReference.Authors} se insertó en el documento activo.";
     }
 
     private static string FormatCitation(WorkspaceReference reference, string format)

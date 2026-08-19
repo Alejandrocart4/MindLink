@@ -125,7 +125,7 @@
             </TextBox>
             <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" Foreground="#6B8FA3" FontSize="13"
                        HorizontalAlignment="Left" VerticalAlignment="Center" Margin="12,0,0,0" IsHitTestVisible="False" />
-            <TextBlock Text="Buscar notas, referencias, ideas..." Foreground="#86A3B3" FontSize="12.5"
+              <TextBlock Text="Buscar notas, referencias, ideas…" Foreground="#86A3B3" FontSize="12.5"
                        HorizontalAlignment="Left" VerticalAlignment="Center" Margin="34,0,0,0" IsHitTestVisible="False">
               <TextBlock.Style>
                 <Style TargetType="TextBlock">
@@ -171,7 +171,7 @@
               Effect="{StaticResource CardShadow}" Visibility="{Binding IsNotificationsOpen, Converter={StaticResource BooleanToVisibility}}">
         <StackPanel>
           <DockPanel><TextBlock Text="Notificaciones" Style="{StaticResource SectionTitle}" /><Button DockPanel.Dock="Right" Command="{Binding CloseNotificationsCommand}" Style="{StaticResource TextButton}" Content="×" Padding="5" /></DockPanel>
-          <Border Margin="0,14,0,0" Padding="11" Background="{StaticResource SoftAmber}" CornerRadius="8"><TextBlock Text="2 referencias necesitan completar sus datos bibliográficos." FontSize="11.5" TextWrapping="Wrap" /></Border>
+          <Border Margin="0,14,0,0" Padding="11" Background="{StaticResource SoftAmber}" CornerRadius="8"><TextBlock Text="2 referencias tienen datos bibliográficos incompletos." FontSize="11.5" TextWrapping="Wrap" /></Border>
           <Border Margin="0,8,0,0" Padding="11" Background="{StaticResource SoftTeal}" CornerRadius="8"><TextBlock Text="La sección 2.3 tiene una nueva versión guardada." FontSize="11.5" TextWrapping="Wrap" /></Border>
           <Border Margin="0,8,0,0" Padding="11" Background="{StaticResource SoftBlue}" CornerRadius="8"><TextBlock Text="Tu red sumó 28 relaciones esta semana." FontSize="11.5" TextWrapping="Wrap" /></Border>
         </StackPanel>

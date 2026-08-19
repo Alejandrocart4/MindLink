@@ -105,7 +105,7 @@
           <TextBlock Text="⌕" FontSize="19" Foreground="{StaticResource TextSubtle}"
                      HorizontalAlignment="Left" VerticalAlignment="Center" Margin="11,0,0,2"
                      IsHitTestVisible="False" />
-          <TextBlock Text="Buscar proyectos..." FontSize="12.5" Foreground="{StaticResource TextSubtle}"
+            <TextBlock Text="Buscar proyectos…" FontSize="12.5" Foreground="{StaticResource TextSubtle}"
                      Margin="32,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
             <TextBlock.Style>
               <Style TargetType="TextBlock">
@@ -239,8 +239,8 @@
                     <Border Background="#EEF4F7" />
                     <Grid Grid.Row="1" Margin="0,12,0,0">
                       <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding NotesCount, StringFormat={}{0} notas}" FontSize="11.5" Foreground="{StaticResource TextSubtle}" Margin="0,0,14,0" />
-                        <TextBlock Text="{Binding ReferencesCount, StringFormat={}{0} refs}" FontSize="11.5" Foreground="{StaticResource TextSubtle}" Margin="0,0,14,0" />
+                        <TextBlock Text="{Binding NotesLabel}" FontSize="11.5" Foreground="{StaticResource TextSubtle}" Margin="0,0,14,0" />
+                        <TextBlock Text="{Binding ReferencesLabel}" FontSize="11.5" Foreground="{StaticResource TextSubtle}" Margin="0,0,14,0" />
                         <TextBlock Text="{Binding Progress, StringFormat={}{0}%}" FontSize="11.5" Foreground="{StaticResource TextSubtle}" />
                       </StackPanel>
                       <TextBlock Text="{Binding UpdatedLabel}" HorizontalAlignment="Right" FontSize="11" Foreground="{StaticResource TextSubtle}" />

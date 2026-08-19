@@ -1,0 +1,6 @@
+[0:v]trim=duration=3,setpts=PTS-STARTPTS,setsar=1[intro];
+[1:v]crop=459:816:390:0,scale=1080:1920:flags=lanczos,drawbox=x=0:y=0:w=1080:h=122:color=0x003280@0.94:t=fill,drawtext=fontfile='C\:/Windows/Fonts/segoeuib.ttf':text='UN ESPACIO PARA PENSAR MEJOR':fontcolor=white:fontsize=33:x=(w-text_w)/2:y=43,fade=t=in:st=0:d=0.18,fade=t=out:st=2.76:d=0.24,setsar=1[home];
+[3:v]crop=459:816:540:0,scale=1080:1920:flags=lanczos,drawbox=x=0:y=0:w=1080:h=122:color=0x006293@0.94:t=fill,drawtext=fontfile='C\:/Windows/Fonts/segoeuib.ttf':text='ESCRIBE SIN PERDER EL CONTEXTO':fontcolor=white:fontsize=33:x=(w-text_w)/2:y=43,fade=t=in:st=0:d=0.18,fade=t=out:st=2.76:d=0.24,setsar=1[docs];
+[2:v]crop=459:816:780:0,scale=1080:1920:flags=lanczos,drawbox=x=0:y=0:w=1080:h=122:color=0x009BA9@0.94:t=fill,drawtext=fontfile='C\:/Windows/Fonts/segoeuib.ttf':text='VE COMO SE CONECTAN TUS IDEAS':fontcolor=white:fontsize=33:x=(w-text_w)/2:y=43,fade=t=in:st=0:d=0.18,fade=t=out:st=2.76:d=0.24,setsar=1[network];
+[4:v]crop=459:816:540:0,scale=1080:1920:flags=lanczos,drawbox=x=0:y=0:w=1080:h=122:color=0x003280@0.94:t=fill,drawtext=fontfile='C\:/Windows/Fonts/segoeuib.ttf':text='COMPARTE UN TRABAJO LISTO':fontcolor=white:fontsize=33:x=(w-text_w)/2:y=43,fade=t=in:st=0:d=0.18,fade=t=out:st=2.76:d=0.24,setsar=1[exports];
+[intro][home][docs][network][exports]concat=n=5:v=1:a=0[outv]

@@ -1,17 +1,20 @@
 using System.Collections.ObjectModel;
 using MindLink.Application.Models;
 using MindLink.Presentation.Navigation;
+using MindLink.Presentation.Services;
 
 namespace MindLink.Presentation.ViewModels;
 
 public sealed class DashboardViewModel : ObservableObject
 {
     private readonly NavigationService navigation;
+    private readonly WorkspaceSession session;
     private string feedbackMessage = string.Empty;
 
-    public DashboardViewModel(WorkspaceSnapshot snapshot, NavigationService navigation)
+    public DashboardViewModel(WorkspaceSnapshot snapshot, NavigationService navigation, WorkspaceSession session)
     {
         this.navigation = navigation;
+        this.session = session;
         UserFirstName = snapshot.User.FirstName;
         Metrics = snapshot.Metrics.Select(DashboardMetricViewModel.FromModel).ToArray();
         QuickActions = snapshot.QuickActions;
@@ -62,6 +65,7 @@ public sealed class DashboardViewModel : ObservableObject
     {
         if (task is null) return;
         PendingTasks.Remove(task);
+        session.Update(workspace => workspace with { PendingTasks = workspace.PendingTasks.Where(item => item.Id != task.Id).ToArray() });
         FeedbackMessage = $"Completaste: {task.Title}";
     }
 }

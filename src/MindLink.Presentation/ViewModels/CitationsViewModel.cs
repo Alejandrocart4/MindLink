@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using MindLink.Application.Models;
+using MindLink.Presentation.Services;
 
 namespace MindLink.Presentation.ViewModels;
 
@@ -13,9 +14,11 @@ public sealed class CitationsViewModel : ObservableObject
     private string newSource = string.Empty;
     private string newPage = string.Empty;
     private string newContext = string.Empty;
+    private readonly WorkspaceSession session;
 
-    public CitationsViewModel(WorkspaceSnapshot workspace)
+    public CitationsViewModel(WorkspaceSnapshot workspace, WorkspaceSession session)
     {
+        this.session = session;
         Citations = new ObservableCollection<CitationCardViewModel>(
             workspace.Citations.Select(citation =>
             {
@@ -33,7 +36,7 @@ public sealed class CitationsViewModel : ObservableObject
     }
 
     public ObservableCollection<CitationCardViewModel> Citations { get; }
-    public string CitationSummary => $"{Citations.Count} citas guardadas · Formato activo: APA 7ª ed.";
+    public string CitationSummary => $"{Citations.Count} citas guardadas · Formato activo: APA, 7.ª ed.";
 
     public string FeedbackMessage
     {
@@ -107,6 +110,11 @@ public sealed class CitationsViewModel : ObservableObject
             NewPage.Trim(),
             NewContext.Trim());
         Citations.Insert(0, card);
+        session.Update(workspace => workspace with
+        {
+            Citations = [new WorkspaceCitation(card.Id, string.Empty, string.Empty, card.Quote,
+                $"{card.Source} · {card.Work}", card.Page, card.Context, card.Tags), .. workspace.Citations]
+        });
         OnPropertyChanged(nameof(CitationSummary));
         CancelNewCitation();
         ShowFeedback("La nueva cita quedó guardada en este espacio local.");
@@ -138,7 +146,16 @@ public sealed class CitationsViewModel : ObservableObject
     private void InsertIntoDocument(CitationCardViewModel? citation)
     {
         if (citation is null) return;
-        ShowFeedback($"La cita de {citation.Source} quedó preparada para insertarse en Documentos.");
+        session.Update(workspace =>
+        {
+            var document = workspace.ActiveDocument;
+            var citationText = $" “{citation.Quote}” ({citation.Source}, {citation.Page}).";
+            var sections = document.Sections.Select(section => section.Id != document.SelectedSectionId
+                ? section
+                : section with { Content = string.Concat(section.Content.TrimEnd(), citationText), WordCount = section.WordCount + citationText.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length }).ToArray();
+            return workspace with { ActiveDocument = document with { Sections = sections, LastSavedLabel = "Cita insertada ahora" } };
+        });
+        ShowFeedback($"La cita de {citation.Source} se insertó en el documento activo.");
     }
 
     private void ShowFeedback(string message)

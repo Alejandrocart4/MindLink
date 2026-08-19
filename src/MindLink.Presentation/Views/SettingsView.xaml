@@ -352,7 +352,7 @@
                   </StackPanel>
                   <Border HorizontalAlignment="Right" VerticalAlignment="Top" Padding="10,3" CornerRadius="11"
                           Background="#30009BA9" BorderBrush="#66009BA9" BorderThickness="1">
-                    <TextBlock Text="PREMIUM" FontSize="11" FontWeight="Bold" Foreground="{StaticResource BrandTeal}" />
+                    <TextBlock Text="PRO" FontSize="11" FontWeight="Bold" Foreground="{StaticResource BrandTeal}" />
                   </Border>
                 </Grid>
                 <StackPanel Margin="0,0,0,14">
