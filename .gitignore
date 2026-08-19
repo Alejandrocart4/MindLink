@@ -1,5 +1,4 @@
-# .NET build outputs
-[Bb]in/
+# .NET intermediate outputs (bin is intentionally versioned)
 [Oo]bj/
 
 # Local tool/browser state
